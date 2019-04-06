@@ -6,11 +6,8 @@ const VuetifyLoaderPlugin = require('vuetify-loader/lib/plugin')
 module.exports = {
   mode: 'spa',
 
-  /*
-  ** Headers of the page
-  */
   head: {
-    title: pkg.name,
+    title: 'Money tracker',
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
@@ -26,42 +23,26 @@ module.exports = {
     ]
   },
 
-  /*
-  ** Customize the progress-bar color
-  */
+  router: {
+    middleware: 'router-auth'
+  },
   loading: { color: '#fff' },
 
-  /*
-  ** Global CSS
-  */
   css: [
     '~/assets/style/app.styl'
   ],
-
-  /*
-  ** Plugins to load before mounting the App
-  */
   plugins: [
-    '@/plugins/vuetify'
+    { src: '@/plugins/vuetify' },
+    '~/plugins/fireauth.js'
+
   ],
 
-  /*
-  ** Nuxt.js modules
-  */
   modules: [
-    // Doc: https://axios.nuxtjs.org/usage
     '@nuxtjs/axios',
   ],
-  /*
-  ** Axios module configuration
-  */
   axios: {
-    // See https://github.com/nuxt-community/axios-module#options
   },
 
-  /*
-  ** Build configuration
-  */
   build: {
     transpile: ['vuetify/lib'],
     plugins: [new VuetifyLoaderPlugin()],
@@ -70,12 +51,12 @@ module.exports = {
         import: ["~assets/style/variables.styl"]
       }
     },
-    
-    /*
-    ** You can extend webpack config here
-    */
     extend(config, ctx) {
-      
+
     }
-  }
+  },
+  vendor: [
+    'firebase',
+    'vuetify'
+  ]
 }
