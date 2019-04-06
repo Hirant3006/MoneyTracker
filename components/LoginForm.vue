@@ -20,7 +20,7 @@
       <v-btn class="signIn m-t-10 w-200" @click="emailLogin" primary>Login</v-btn>
       <v-layout class="m-tb-10" justify-space-between>
         <span class="red--text">Forgot</span>
-        <span>Signup</span>
+        <span @click="emailSignUp">Signup</span>
       </v-layout>
       <span>________OR________</span>
       <div class="m-t-20">
@@ -77,6 +77,12 @@ export default {
         .catch(e => {
           console.log(e.message);
         });
+    },
+    emailSignUp() {
+      this.$store.dispatch("signUp",{
+        email:'lychautrinha@gmail.com',
+        password:'lychautrinha'
+      }).then(console.log('Sucess in vue file'))
     }
   }
 };

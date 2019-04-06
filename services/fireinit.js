@@ -13,6 +13,7 @@ var config = {
 
 !firebase.apps.length ? firebase.initializeApp(config) : ''
 export const GoogleProvider = new firebase.auth.GoogleAuthProvider();
+export const FacebookProvider = new firebase.auth.FacebookAuthProvider()
 export const auth = firebase.auth();
 export const DB = firebase.database();
 export default firebase

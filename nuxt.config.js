@@ -29,7 +29,10 @@ module.exports = {
   loading: { color: '#fff' },
 
   css: [
-    '~/assets/style/app.styl'
+    '~/assets/style/app.styl',
+    // { src: '~/assets/css/common.scss', lang: 'scss' },
+
+
   ],
   plugins: [
     { src: '@/plugins/vuetify' },
