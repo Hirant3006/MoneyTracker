@@ -33,9 +33,9 @@ const createStore = () => {
           resolve()
         })
       },
-      signInWithEmail({ commit }, payload) {
-        console.log(payload)
-        return null
+      signInWithEmail({ commit }, {email,password}) {
+        
+        return firebase.auth().signInWithEmailAndPassword(email, password)
       },
 
       signOut({ commit }) {
@@ -45,8 +45,6 @@ const createStore = () => {
       },
 
       signUp({ commit }, { email, password }) {
-        console.log('Sign up sadsa')
-
         return new Promise((resolve, reject) => {
           auth.createUserWithEmailAndPassword(email, password)
           resolve()
