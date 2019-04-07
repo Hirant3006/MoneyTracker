@@ -20,7 +20,7 @@
       <v-btn class="signIn m-t-10 w-200" @click="emailLogin" primary>Login</v-btn>
       <v-layout class="m-tb-10" justify-space-between>
         <span class="red--text">Forgot</span>
-        <span @click="emailSignUp">Signup</span>
+        <router-link to="/signup">Signup</router-link>
       </v-layout>
       <span>________OR________</span>
       <div class="m-t-20">

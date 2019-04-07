@@ -20,7 +20,7 @@
       <v-toolbar-title v-text="title"></v-toolbar-title>
       <v-spacer></v-spacer>
       <div v-if="user" id="user" class="text-xs-center">
-        <v-menu offset-x :close-on-content-click="false" :nudge-top="200" v-model="menu">
+        <v-menu offset-x :close-on-content-click="false" :nudge-top="200" >
           <v-btn icon slot="activator">
             <v-icon medium>settings</v-icon>
           </v-btn>
