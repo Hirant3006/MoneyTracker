@@ -17,8 +17,8 @@
         type="password"
         v-model="formPassword"
       ></v-text-field>
-      <v-btn class="signIn m-t-10 w-200" @click="emailLogin" primary>Login</v-btn>
-      <br/>
+      <v-btn class="signIn m-t-10 w-200" @click="emailSignUp" primary>Đăng ký</v-btn>
+      <br>
       <span>________OR________</span>
       <div class="m-t-20">
         <v-btn class="m-5 w-200" primary @click.native="googleSignUp">
@@ -29,11 +29,85 @@
         </v-btn>
       </div>
     </v-flex>
+    <v-snackbar v-model="snackbar" :color="color" :timeout="5000" :top='true'>
+      {{ text }}
+      <v-btn dark flat @click="snackbar = false">Close</v-btn>
+    </v-snackbar>
   </v-layout>
 </template>
 
 <script>
-export default {}
+export default {
+  data() {
+    return {
+      formEmail: '',
+      formPassword: '',
+      snackbar: false,
+      color: '',
+      text: ''
+    }
+  },
+  methods: {
+    emailLogin() {
+      this.$store
+        .dispatch('signInWithEmail', {
+          email: this.formEmail,
+          password: this.formPassword
+        })
+        .then(() => {
+          this.formEmail = ''
+          this.formPassword = ''
+        })
+        .catch(e => {
+          console.log(e.message)
+        })
+    },
+    googleSignUp() {
+      this.$store
+        .dispatch('signInWithGoogle')
+        .then(() => {
+          console.log('inside then statement on login')
+        })
+        .catch(e => {
+          console.log(e.message)
+        })
+    },
+    facebookSignUp() {
+      this.$store
+        .dispatch('signInWithFacebook')
+        .then(() => {
+          console.log('inside then statement on login')
+        })
+        .catch(e => {
+          console.log(e.message)
+        })
+    },
+    emailSignUp() {
+      this.$store
+        .dispatch('signUp', {
+          email: this.formEmail,
+          password: this.formPassword
+        })
+        .then(
+          data => {
+            this.$router.push('/login')
+            this.text = 'Sign up success'
+            this.color = 'success'
+            this.snackbar = true
+          }
+          // this.$router.push('/login')
+        )
+        .catch(data => {
+          console.log('catch')
+          this.text = data.message
+          this.color = 'error'
+          this.snackbar = true
+          this.formEmail = ''
+          this.formPassword = ''
+        })
+    }
+  }
+}
 </script>
 
 <style>
