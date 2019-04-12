@@ -19,7 +19,7 @@
       ></v-text-field>
       <v-btn class="signIn m-t-10 w-200" @click="emailLogin" primary>Login</v-btn>
       <v-layout class="m-tb-10" justify-space-between>
-        <span class="red--text" @click="resetPassword" style="cursor:pointer">Forgot</span>
+        <span class="red--text" @click="snackTime" style="cursor:pointer">Forgot</span>
         <router-link to="/signup">Đăng ký</router-link>
       </v-layout>
       <span>________OR________</span>
@@ -54,6 +54,8 @@
 </template>
 
 <script>
+import { mapMutations } from 'vuex'
+
 export default {
   data() {
     return {
@@ -67,10 +69,17 @@ export default {
     }
   },
   methods: {
+    // snackTime: function(snack) {
+    //   this.setSnack('hello')
+    //   // this.$router.push('/')
+    // },
+    // ...mapMutations({
+    //   setSnack: 'snackbar/setSnack'
+    // }),
     emailLogin() {
       console.log('log in')
       this.$store
-        .dispatch('signInWithEmail', {
+        .dispatch('users/signInWithEmail', {
           email: this.formEmail,
           password: this.formPassword
         })

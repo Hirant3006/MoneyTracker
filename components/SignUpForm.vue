@@ -20,7 +20,7 @@
       <v-btn class="signIn m-t-10 w-200" @click="emailLogin" primary>Login</v-btn>
       <v-layout class="m-tb-10" justify-space-between>
         <span class="red--text">Forgot</span>
-        <span @click="emailSignUp">Signup</span>
+        <span @click="snackTime">Signup</span>
       </v-layout>
       <span>________OR________</span>
       <div class="m-t-20">
@@ -36,7 +36,19 @@
 </template>
 
 <script>
-export default {}
+import { mapMutations } from 'vuex'
+
+export default {
+  methods: {
+    snackTime: function(snack) {
+      this.setSnack('hello')
+      // this.$router.push('/')
+    },
+    ...mapMutations({
+      setSnack: 'snackbar/setSnack'
+    })
+  }
+}
 </script>
 
 <style>

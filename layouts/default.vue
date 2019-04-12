@@ -20,7 +20,7 @@
       <v-toolbar-title v-text="title"></v-toolbar-title>
       <v-spacer></v-spacer>
       <div v-if="user" id="user" class="text-xs-center">
-        <v-menu offset-x :close-on-content-click="false" :nudge-top="200" >
+        <v-menu offset-x :close-on-content-click="false" :nudge-top="200">
           <v-btn icon slot="activator">
             <v-icon medium>settings</v-icon>
           </v-btn>
@@ -73,24 +73,24 @@ export default {
       drawer: null,
       fixed: false,
       items: routerItems,
-      title: "Money tracker",
+      title: 'Money tracker',
       menu: false
-    };
+    }
   },
   computed: {
     user() {
-      return this.$store.getters.activeUser;
+      return this.$store.getters.activeUser
     }
   },
   methods: {
     logout() {
-      this.$store.dispatch("signOut").then(() => {
-        alert("logged out!");
-        this.$router.push("/");
-      });
+      this.$store.dispatch('signOut').then(() => {
+        alert('logged out!')
+        this.$router.push('/')
+      })
     }
   }
-};
+}
 </script>
 
 <style>
