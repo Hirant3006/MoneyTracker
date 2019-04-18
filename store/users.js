@@ -1,22 +1,22 @@
-import Vuex from 'vuex'
-import firebase, { auth, GoogleProvider, FacebookProvider } from '@/services/fireinit.js'
-export const state = () => ({
+import { auth, GoogleProvider, FacebookProvider } from '@/services/fireinit.js'
+
+const state = () => ({
   user: null
 })
 
-export const getters = () => ({
+const getters = {
   activeUser: (state, getters) => {
     return state.user
   }
-})
+}
 
-export const mutations = () => ({
+const mutations = {
   setUser(state, payload) {
     state.user = payload
   }
-})
+}
 
-export const actions = () => ({
+const actions ={
   autoSignIn({ commit }, payload) {
     commit('setUser', payload)
   },
@@ -51,4 +51,12 @@ export const actions = () => ({
     })
 
   }
-})
+}
+
+export default {
+  namespaced: true,
+  state,
+  mutations,
+  actions,
+  getters // <== make sure this is defined
+}

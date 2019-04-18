@@ -1,8 +1,15 @@
 import Vuex from 'vuex'
 import firebase, { auth, GoogleProvider, FacebookProvider } from '@/services/fireinit.js'
+import snackbar from './snackbar'
+import users from './users'
 
 const createStore = () => {
   return new Vuex.Store({
+    namespaced: true,
+    modules: {
+      snackbar:snackbar,
+      user:users
+    },
     state: {
       user: null
     },

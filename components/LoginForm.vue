@@ -36,20 +36,6 @@
       {{ text }}
       <v-btn dark flat @click="snackbar = false">Close</v-btn>
     </v-snackbar>
-    <v-dialog v-model="dialog" width="500">
-      <v-card>
-        <v-card-title class="headline grey lighten-2" primary-title>Privacy Policy</v-card-title>
-
-        <v-card-text>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</v-card-text>
-
-        <v-divider></v-divider>
-
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="primary" flat @click="dialog = false">I accept</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
   </v-layout>
 </template>
 
@@ -61,85 +47,81 @@ export default {
     return {
       formEmail: '',
       formPassword: '',
-      snackbar: false,
-      color: '',
-      text: '',
       dialog: false,
       emailreset: ''
     }
   },
   methods: {
-    // snackTime: function(snack) {
-    //   this.setSnack('hello')
-    //   // this.$router.push('/')
-    // },
-    // ...mapMutations({
-    //   setSnack: 'snackbar/setSnack'
-    // }),
+    snackTime: function(snack, color) {
+      this.setSnack({ msg: 'awdawdw', color: 'warning' })
+      // this.$router.push('/')
+    },
+    ...mapMutations({
+      setSnack: 'snackbar/setSnack'
+    }),
     emailLogin() {
-      console.log('log in')
       this.$store
-        .dispatch('users/signInWithEmail', {
+        .dispatch('user/signInWithEmail', {
           email: this.formEmail,
           password: this.formPassword
         })
         .then(() => {
           this.formEmail = ''
           this.formPassword = ''
+          this.setSnack({ msg: 'Đăng nhập thành công', color: 'success' })
         })
         .catch(data => {
-          this.text = data.message
-          this.color = 'error'
-          this.snackbar = true
           this.formEmail = ''
           this.formPassword = ''
+          this.setSnack({ msg: data.message, color: 'error' })
         })
     },
     googleSignUp() {
       this.$store
-        .dispatch('signInWithGoogle')
+        .dispatch('user/signInWithGoogle')
         .then(() => {
           console.log('inside then statement on login')
         })
         .catch(e => {
-          console.log(e.message)
+          this.setSnack({ msg: e.message, color: 'error' })
         })
     },
     facebookSignUp() {
       this.$store
-        .dispatch('signInWithFacebook')
+        .dispatch('user/signInWithFacebook')
         .then(() => {
           console.log('inside then statement on login')
         })
         .catch(e => {
-          console.log(e.message)
+          this.setSnack({ msg: e.message, color: 'error' })
         })
     },
     emailSignUp() {
       this.$store
-        .dispatch('signUp', {
+        .dispatch('user/signUp', {
           email: 'lychautrinha@gmail.com',
           password: 'lychautrinha'
         })
-        .then(console.log('Sucess in vue file'))
+        .then(this.setSnack({ msg: 'Đăng nhập thành công', color: 'success' }))
+        .catch(e => {
+          this.setSnack({ msg: e.message, color: 'error' })
+        })
     },
     resetPassword() {
       this.$store
-        .dispatch('resetPassword', {
+        .dispatch('user/resetPassword', {
           email: 'lychautrinha@gmail.com'
         })
         .then(() => {
-          this.text = 'Một email xác nhận đã được gửi đến mail của bạn'
-          this.color = 'warning'
-          this.snackbar = true
-          this.dialog = false
           this.emailreset = ''
+          this.setSnack({
+            msg: 'Một email xác nhận đã được gửi đến mail của bạn',
+            color: 'warning'
+          })
         })
         .catch(data => {
-          this.text = data.message
-          this.color = 'error'
-          this.snackbar = true
           this.emailreset = ''
+          this.setSnack({ msg: data.message, color: 'error' })
         })
     }
   }

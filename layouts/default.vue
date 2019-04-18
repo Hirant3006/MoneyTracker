@@ -61,11 +61,13 @@
     <v-footer app :fixed="fixed" class="justify-center px-4">
       <!-- <span>&copy; 2017</span> -->
     </v-footer>
+    <snackbar/>
   </v-app>
 </template>
 
 <script>
 import routerItems from '../common/router.js'
+import snackbar from '../components/common/Snackbar'
 
 export default {
   data() {
@@ -77,6 +79,9 @@ export default {
       menu: false
     }
   },
+  components: {
+    snackbar
+  },
   computed: {
     user() {
       return this.$store.getters.activeUser
@@ -84,7 +89,7 @@ export default {
   },
   methods: {
     logout() {
-      this.$store.dispatch('signOut').then(() => {
+      this.$store.dispatch('user/signOut').then(() => {
         alert('logged out!')
         this.$router.push('/')
       })
