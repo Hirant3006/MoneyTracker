@@ -1,7 +1,7 @@
 export default function ({ store, redirect, route }) {
   console.log('Middleware ' , route)
-  store.state.user != null && route.name == 'login' ? redirect('/admin') : ''
-  store.state.user == null  ? redirect('/login') : ''
+  store.state.user !== null && route.name == 'login' ? redirect('/home') : ''
+  store.state.user == null && isAdminRoute(route) ? redirect('/login') : ''
 }
 
 function isAdminRoute(route) {
