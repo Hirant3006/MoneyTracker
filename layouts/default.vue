@@ -47,15 +47,16 @@
         </v-menu>
       </div>
     </v-toolbar>
-    <!-- <v-content>
-    <v-container fluid>
-      <router-view></router-view>
-    </v-container>
-  </v-content>
-    -->
     <v-content>
       <v-container fluid>
         <nuxt/>
+        <v-card-text style="height: 100px; position: relative">
+          <v-fab-transition>
+            <v-btn v-show="true" color="pink" dark fixed bottom  fab style="bottom:50px;right:50px">
+              <v-icon>add</v-icon>
+            </v-btn>
+          </v-fab-transition>
+        </v-card-text>
       </v-container>
     </v-content>
     <v-footer app :fixed="fixed" class="justify-center px-4">
