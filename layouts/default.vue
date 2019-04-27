@@ -52,13 +52,61 @@
         <nuxt/>
         <v-card-text style="height: 100px; position: relative">
           <v-fab-transition>
-            <v-btn v-show="true" color="pink" dark fixed bottom  fab style="bottom:50px;right:50px">
+            <v-btn
+              v-if="user"
+              color="pink"
+              dark
+              fixed
+              bottom
+              @click="onToggleAddDealDialog"
+              fab
+              style="bottom:50px;right:50px"
+            >
               <v-icon>add</v-icon>
             </v-btn>
           </v-fab-transition>
         </v-card-text>
       </v-container>
     </v-content>
+    <v-dialog v-model="addDealDialog" max-width="600px">
+      <v-card>
+        <v-card-title>
+          <span class="headline pb-1">Thêm giao dịch</span>
+        </v-card-title>
+        <v-card-text style="padding-top:0">
+          <v-form ref="forgetAccountForm">
+            <v-layout wrap>
+              <v-flex xs12 sm12 md12>
+                <v-select
+                  prepend-icon="help"
+                  :items="['0-17', '18-29', '30-54', '54+']"
+                  label="Chọn hạng mục"
+                  required
+                ></v-select>
+              </v-flex>
+              <v-flex xs12 sm12 md12>
+                <v-text-field prepend-icon="note" label="Ghi chú" persistent-hint></v-text-field>
+              </v-flex>
+              <v-layout justify-space-between>
+                <v-flex xs9 sm9 md9>
+                  <v-text-field prepend-icon="calendar_today" label="Ngày" required></v-text-field>
+                </v-flex>
+                <v-flex xs3 sm3 md3>
+                  <v-text-field prepend-icon="access_time" label="Giờ" required></v-text-field>
+                </v-flex>
+              </v-layout>
+              <v-flex xs12 sm12 md12>
+                <v-text-field prepend-icon="featured_play_list" label="Chọn tài khoản" required></v-text-field>
+              </v-flex>
+            </v-layout>
+          </v-form>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="blue darken-1" flat @click="() => addDealDialog=false">Thêm</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
     <v-footer app :fixed="fixed" class="justify-center px-4">
       <!-- <span>&copy; 2017</span> -->
     </v-footer>
@@ -77,7 +125,8 @@ export default {
       fixed: false,
       items: routerItems,
       title: 'Money tracker',
-      menu: false
+      menu: false,
+      addDealDialog: false
     }
   },
   components: {
@@ -89,6 +138,9 @@ export default {
     }
   },
   methods: {
+    onToggleAddDealDialog() {
+      this.addDealDialog = true
+    },
     logout() {
       this.$store.dispatch('user/signOut').then(() => {
         alert('logged out!')

@@ -50,6 +50,10 @@ const actions ={
       resolve()
     })
 
+  },
+
+  resetPassword({ commit }, { email} ){
+    return auth.sendPasswordResetEmail(email)
   }
 }
 

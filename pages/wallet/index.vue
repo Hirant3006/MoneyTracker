@@ -84,35 +84,33 @@
         </v-card-title>
         <v-card-text>
           <v-form ref="addAccountForm">
-            <v-container grid-list-md>
-              <v-layout wrap>
-                <v-flex xs12 sm12 md12>
-                  <v-text-field label="Số dư ban đầu" value="10.00" prefix="$"></v-text-field>
-                </v-flex>
-                <v-flex xs12 sm12 md12>
-                  <v-text-field prepend-icon="featured_play_list" label="Tên tài khoản" required></v-text-field>
-                </v-flex>
-                <v-flex xs12 sm12 md12>
-                  <v-select
-                    prepend-icon="help"
-                    :items="['0-17', '18-29', '30-54', '54+']"
-                    label="Loại tài khoản*"
-                    required
-                  ></v-select>
-                </v-flex>
-                <v-flex xs12 sm12 md412>
-                  <v-select
-                    prepend-icon="attach_money"
-                    :items="['0-17', '18-29', '30-54', '54+']"
-                    label="Đơn vị tiền tệ*"
-                    required
-                  ></v-select>
-                </v-flex>
-                <v-flex xs12 sm12 md12>
-                  <v-text-field prepend-icon="note" label="Ghi chú" persistent-hint></v-text-field>
-                </v-flex>
-              </v-layout>
-            </v-container>
+            <v-layout wrap>
+              <v-flex xs12 sm12 md12>
+                <v-text-field label="Số dư ban đầu" value="10.00" prefix="$"></v-text-field>
+              </v-flex>
+              <v-flex xs12 sm12 md12>
+                <v-text-field prepend-icon="featured_play_list" label="Tên tài khoản" required></v-text-field>
+              </v-flex>
+              <v-flex xs12 sm12 md12>
+                <v-select
+                  prepend-icon="help"
+                  :items="['0-17', '18-29', '30-54', '54+']"
+                  label="Loại tài khoản*"
+                  required
+                ></v-select>
+              </v-flex>
+              <v-flex xs12 sm12 md12>
+                <v-select
+                  prepend-icon="attach_money"
+                  :items="['0-17', '18-29', '30-54', '54+']"
+                  label="Đơn vị tiền tệ*"
+                  required
+                ></v-select>
+              </v-flex>
+              <v-flex xs12 sm12 md12>
+                <v-text-field prepend-icon="note" label="Ghi chú" persistent-hint></v-text-field>
+              </v-flex>
+            </v-layout>
           </v-form>
         </v-card-text>
         <v-card-actions>
@@ -122,7 +120,6 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-
     <v-dialog v-model="editTotalDialog" max-width="600px">
       <v-card>
         <v-card-title>
@@ -130,67 +127,89 @@
         </v-card-title>
         <v-card-text>
           <v-form ref="editTotalForm">
-            <v-container grid-list-md>
-              <v-layout wrap>
-                <v-flex xs12 sm12 md12>
-                  <v-text-field prepend-icon="featured_play_list" label="Chọn tài khoản" required></v-text-field>
-                </v-flex>
+            <v-layout wrap>
+              <v-flex xs12 sm12 md12>
+                <v-text-field prepend-icon="featured_play_list" label="Chọn tài khoản" required></v-text-field>
+              </v-flex>
+              <v-layout justify-space-between>
                 <v-flex xs9 sm9 md9>
-                  <v-text-field prepend-icon="person" label="Ngày" required></v-text-field>
+                  <v-text-field prepend-icon="calendar_today" label="Ngày" required></v-text-field>
                 </v-flex>
                 <v-flex xs3 sm3 md3>
-                  <v-text-field label="Giờ" required></v-text-field>
+                  <v-text-field prepend-icon="access_time" label="Giờ" required></v-text-field>
                 </v-flex>
-                <v-layout justify-space-between ml-1 mr-1 mt-1>
-                  <h4>Số dư trên tài khoản</h4>
-                  <h4>5.000.000đ</h4>
-                </v-layout>
-                <v-flex xs12 sm12 md12>
-                  <v-text-field label="Số dư thực tế" required></v-text-field>
-                </v-flex>
-                <v-layout justify-space-between ml-1 mr-1>
-                  <h5>Chênh lệch</h5>
-                  <h5>0đ</h5>
-                </v-layout>
-
-                <v-flex xs12 sm12 md12>
-                  <v-text-field prepend-icon="note" label="Ghi chú" persistent-hint></v-text-field>
-                </v-flex>
-                <!-- <v-layout justify-space-between ml-1 mr-1 mt-1>
-                  <h4>Số dư trên tài khoản</h4>
-                  <h4>5.000.000đ</h4>
-                </v-layout>-->
-                <!-- <v-flex xs3 sm3 md3>
-                  <v-text-field  label="Giờ" required></v-text-field>
-                </v-flex>
-                <v-flex xs12 sm12 md12>
-                  <v-select
-                    prepend-icon="help"
-                    :items="['0-17', '18-29', '30-54', '54+']"
-                    label="Loại tài khoản*"
-                    required
-                  ></v-select>
-                </v-flex>
-                <v-flex xs12 sm12 md412>
-                  <v-select
-                    prepend-icon="attach_money"
-                    :items="['0-17', '18-29', '30-54', '54+']"
-                    label="Đơn vị tiền tệ*"
-                    required
-                  ></v-select>
-                </v-flex>
-                <v-flex xs12 sm12 md12>
-                  <v-text-field prepend-icon="note" label="Ghi chú" persistent-hint></v-text-field>
-                </v-flex>-->
               </v-layout>
-            </v-container>
-            <!-- <small>*indicates required field</small> -->
+              <v-layout justify-space-between ml-1 mr-1 mt-1>
+                <h4>Số dư trên tài khoản</h4>
+                <h4>5.000.000đ</h4>
+              </v-layout>
+              <v-flex xs12 sm12 md12>
+                <v-text-field label="Số dư thực tế" required></v-text-field>
+              </v-flex>
+              <v-layout justify-space-between ml-1 mr-1>
+                <h5>Chênh lệch</h5>
+                <h5>0đ</h5>
+              </v-layout>
+
+              <v-flex xs12 sm12 md12>
+                <v-text-field prepend-icon="note" label="Ghi chú" persistent-hint></v-text-field>
+              </v-flex>
+            </v-layout>
           </v-form>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="blue darken-1" flat @click="editTotalDialog = false">Đóng</v-btn>
           <v-btn color="blue darken-1" flat @click="editTotalDialog = false">Lưu</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <v-dialog v-model="transferDialog" max-width="600px">
+      <v-card>
+        <v-card-title>
+          <span class="headline">Chuyển khoản</span>
+        </v-card-title>
+        <v-card-text>
+          <v-form ref="transferForm">
+            <v-layout wrap>
+              <v-flex xs12 sm12 md12>
+                <v-text-field label="Số tiền" value="10.00" prefix="$"></v-text-field>
+              </v-flex>
+              <v-flex xs12 sm12 md12>
+                <v-select
+                  prepend-icon="featured_play_list"
+                  :items="['0-17', '18-29', '30-54', '54+']"
+                  label="Từ tài khoản*"
+                  required
+                ></v-select>
+              </v-flex>
+              <v-flex xs12 sm12 md12>
+                <v-select
+                  prepend-icon="featured_play_list"
+                  :items="['0-17', '18-29', '30-54', '54+']"
+                  label="Đến tài khoản*"
+                  required
+                ></v-select>
+              </v-flex>
+              <v-spacer></v-spacer>
+              <v-layout justify-space-between>
+                <v-flex xs9 sm9 md9>
+                  <v-text-field prepend-icon="calendar_today" label="Ngày" required></v-text-field>
+                </v-flex>
+                <v-flex xs3 sm3 md3>
+                  <v-text-field prepend-icon="access_time" label="Giờ" required></v-text-field>
+                </v-flex>
+              </v-layout>
+              <v-flex xs12 sm12 md12>
+                <v-text-field prepend-icon="note" label="Ghi chú" persistent-hint></v-text-field>
+              </v-flex>
+            </v-layout>
+          </v-form>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="blue darken-1" flat @click="transferDialog = false">Đóng</v-btn>
+          <v-btn color="blue darken-1" flat @click="transferDialog = false">Lưu</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -216,7 +235,8 @@ export default {
   data: function() {
     return {
       addAccountDialog: false,
-      editTotalDialog: true,
+      editTotalDialog: false,
+      transferDialog: false,
       account: dummieAccount,
       items: [
         {
@@ -244,7 +264,8 @@ export default {
     onToggleMore(info, item) {
       console.log({ info }, { item })
       if (info.title === 'Điều chỉnh số dư') this.editTotalDialog = true
-    }
+      if (info.title === 'Chuyển khoản') this.transferDialog = true   
+   }
   },
   watch: {
     addAccountDialog() {
