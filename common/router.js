@@ -1,5 +1,7 @@
 export default [
-    { icon: "home", title: "Welcome", to: "/" },
-    { icon: "person", title: "Admin", to: "/admin" },
-    { icon: "money", title: "Wallet", to: "/wallet" }
+    { icon: "home", title: "Tổng quan", to: "/" },
+    { icon: "money", title: "Tài khoản", to: "/wallet" },
+    { icon: "person", title: "Hạn mức chi", to: "/admin" },
+    { icon: "about", title: "About", to: "/about" },
+
 ]

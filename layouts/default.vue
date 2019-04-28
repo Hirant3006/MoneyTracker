@@ -35,13 +35,21 @@
                 </v-list-tile-content>
               </v-list-tile>
               <v-divider></v-divider>
-
-              <v-list-tile>
+              <v-list-tile
+                v-for="(info, index) in utilItems"
+                :key="index"
+                @click="onToggleMore(info,item)"
+              >
                 <v-spacer></v-spacer>
-                <v-list-tile-action>
-                  <v-btn primary class="mt-2" color="primary" @click.native="logout">Logout</v-btn>
-                </v-list-tile-action>
+                <v-icon style="margin-right: 20px;" class>{{info.icon}}</v-icon>
+                <v-list-tile-title>{{ info.title }}</v-list-tile-title>
               </v-list-tile>
+              <!-- <v-list-tile @click.native="logout">
+                <v-spacer></v-spacer>
+                <v-spacer></v-spacer>
+                <v-icon style="margin-right: 20px;" class>logout</v-icon>
+                <v-list-tile-title>Đăng xuất</v-list-tile-title>
+              </v-list-tile>-->
             </v-list>
           </v-card>
         </v-menu>
@@ -107,6 +115,48 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <v-dialog v-model="addRecordDialog" max-width="600px">
+      <v-card>
+        <v-card-title>
+          <span class="headline pb-1">Ghi chép mẫu</span>
+        </v-card-title>
+        <v-card-text style="padding-top:0">
+          <v-form ref="forgetAccountForm">
+            <v-layout wrap>
+              <v-flex xs12 sm12 md12>
+                <v-text-field prepend-icon="note" label="Tên ghi chép" persistent-hint></v-text-field>
+              </v-flex>
+              <v-flex xs12 sm12 md12>
+                <v-text-field label="Số tiền" value="10.00" prefix="$"></v-text-field>
+              </v-flex>
+              <v-flex xs12 sm12 md12>
+                <v-select
+                  prepend-icon="help"
+                  :items="['0-17', '18-29', '30-54', '54+']"
+                  label="Chọn hạng mục"
+                  required
+                ></v-select>
+              </v-flex>
+              <v-flex xs12 sm12 md12>
+                <v-text-field prepend-icon="note" label="Ghi chú" persistent-hint></v-text-field>
+              </v-flex>
+                <v-flex xs12 sm12 md12>
+                <v-select
+                  prepend-icon="featured_play_list"
+                  :items="['0-17', '18-29', '30-54', '54+']"
+                  label="Chọn tài khoản"
+                  required
+                ></v-select>
+              </v-flex>
+            </v-layout>
+          </v-form>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="blue darken-1" flat @click="() => addDealDialog=false">Thêm</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
     <v-footer app :fixed="fixed" class="justify-center px-4">
       <!-- <span>&copy; 2017</span> -->
     </v-footer>
@@ -117,6 +167,7 @@
 <script>
 import routerItems from '../common/router.js'
 import snackbar from '../components/common/Snackbar'
+import { mapMutations } from 'vuex'
 
 export default {
   data() {
@@ -124,9 +175,24 @@ export default {
       drawer: null,
       fixed: false,
       items: routerItems,
+      utilItems: [
+        {
+          title: 'Lịch sử ghi chép',
+          icon: 'note'
+        },
+        {
+          title: 'Ghi chép mẫu',
+          icon: 'note'
+        },
+        { title: 'Chuyển tiền', icon: 'swap_horiz' },
+        { title: 'Điều chỉnh số dư', icon: 'settings' },
+        { title: 'Thống kê theo tháng', icon: 'equalizer' },
+        { title: 'Đăng xuất', icon: 'logout' }
+      ],
       title: 'Money tracker',
       menu: false,
-      addDealDialog: false
+      addDealDialog: false,
+      addRecordDialog: true
     }
   },
   components: {
@@ -138,12 +204,19 @@ export default {
     }
   },
   methods: {
+    ...mapMutations({
+      setSnack: 'snackbar/setSnack'
+    }),
+    onToggleMore(info, item) {
+      console.log({ info }, { item })
+      if (info.title === 'Đăng xuất') this.logout()
+    },
     onToggleAddDealDialog() {
       this.addDealDialog = true
     },
     logout() {
       this.$store.dispatch('user/signOut').then(() => {
-        alert('logged out!')
+        this.setSnack({ msg: 'Đăng xuất thành công', color: 'success' })
         this.$router.push('/')
       })
     }
