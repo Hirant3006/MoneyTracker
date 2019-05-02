@@ -16,8 +16,7 @@
       <v-btn v-if="user" icon @click.native.stop="drawer = !drawer">
         <v-icon>menu</v-icon>
       </v-btn>
-
-      <v-toolbar-title v-text="title"></v-toolbar-title>
+      <v-toolbar-title v-text="title" style="cursorLpinter" @click="toHomepage"></v-toolbar-title>
       <v-spacer></v-spacer>
       <div v-if="user" id="user" class="text-xs-center">
         <v-menu offset-x :close-on-content-click="false" :nudge-top="200">
@@ -28,7 +27,7 @@
             <v-list>
               <v-list-tile avatar>
                 <v-list-tile-avatar>
-                  <img :src="$store.state.user.photoURL" alt="John">
+                  <img :src="$store.state.user.photoURL" alt="user">
                 </v-list-tile-avatar>
                 <v-list-tile-content>
                   <v-list-tile-title v-if="user.displayName">{{user.displayName}}</v-list-tile-title>
@@ -140,7 +139,7 @@
               <v-flex xs12 sm12 md12>
                 <v-text-field prepend-icon="note" label="Ghi chú" persistent-hint></v-text-field>
               </v-flex>
-                <v-flex xs12 sm12 md12>
+              <v-flex xs12 sm12 md12>
                 <v-select
                   prepend-icon="featured_play_list"
                   :items="['0-17', '18-29', '30-54', '54+']"
@@ -192,7 +191,7 @@ export default {
       title: 'Money tracker',
       menu: false,
       addDealDialog: false,
-      addRecordDialog: true
+      addRecordDialog: false
     }
   },
   components: {
@@ -219,6 +218,9 @@ export default {
         this.setSnack({ msg: 'Đăng xuất thành công', color: 'success' })
         this.$router.push('/')
       })
+    },
+    toHomepage() {
+      this.$router.push('/')
     }
   }
 }
