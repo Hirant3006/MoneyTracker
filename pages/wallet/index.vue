@@ -27,24 +27,28 @@
                     </v-btn>
                   </v-layout>
                   <v-list>
+                    <v-layout v-if="accountLoading" justify-center mt-1>
+                      <v-progress-circular indeterminate color="primary"></v-progress-circular>
+                    </v-layout>
                     <v-container
+                      v-else
                       class="font-weight-medium"
                       v-for="(item,index) in account"
                       :key="index"
                     >
                       <v-divider class="mb-2"/>
                       <v-layout justify-space-between mt-4>
-                        <v-layout>
+                        <v-layout class="ml-2">
                           <v-avatar :size="40" color=" lighten-4">
                             <img
                               src="https://vuetifyjs.com/apple-touch-icon-180x180.png"
                               alt="avatar"
                             >
                           </v-avatar>
-                          <div class="ml-3" style="align-self:center">
-                            <span>{{item.name}}</span>
+                          <div class="ml-3">
+                            <span>{{item.accountType}}</span>
                             <br>
-                            <span>{{item.total}}</span>
+                            <span>{{item.balance}}</span>
                           </div>
                         </v-layout>
 
@@ -231,13 +235,17 @@ const dummieAccount = [
     total: 2000000
   }
 ]
+import firebase from '@/services/fireinit.js'
+
 export default {
   data: function() {
     return {
+      total: 0,
       addAccountDialog: false,
       editTotalDialog: false,
       transferDialog: false,
-      account: dummieAccount,
+      accountLoading: false,
+      account: null,
       items: [
         {
           title: 'Chuyển khoản',
@@ -254,6 +262,26 @@ export default {
       modelDieuChinhSoDu: false
     }
   },
+  async mounted() {
+    let array = []
+    // let totalBalance = 0
+    const uid = await firebase.auth().currentUser.uid
+    console.log({ uid })
+    var ref = await firebase.database().ref(`${uid}/Account`)
+
+    await ref.on('value', snapshot => {
+      this.accountLoading=true;
+      console.log(snapshot)
+      let keys = (snapshot.val() && Object.keys(snapshot.val())) || []
+      keys.map((item, index) => {
+        array.push(snapshot.val()[item])
+      })
+    })
+    this.accountLoading=false;
+    this.account = array
+    console.log(array)
+  },
+
   methods: {
     onClickAccount(e) {
       // if (e.target.textContent==="Chuyển khoản")
@@ -264,8 +292,8 @@ export default {
     onToggleMore(info, item) {
       console.log({ info }, { item })
       if (info.title === 'Điều chỉnh số dư') this.editTotalDialog = true
-      if (info.title === 'Chuyển khoản') this.transferDialog = true   
-   }
+      if (info.title === 'Chuyển khoản') this.transferDialog = true
+    }
   },
   watch: {
     addAccountDialog() {
