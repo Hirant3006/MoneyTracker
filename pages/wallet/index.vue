@@ -1,5 +1,28 @@
 <template>
   <v-layout justify-center align-center>
+    <v-dialog v-model="categoriesDialog" max-width="600px">
+      <v-tabs v-model="active" slider-color="cyan">
+        <v-tab v-for="type in categoriesType" :key="type" ripple>{{ type}}</v-tab>
+        <v-tab-item v-for="(cateType,index) in categories" :key="index">
+          <v-card flat>
+            <v-container fluid grid-list-sm>
+              <v-layout row wrap>
+                {{cateType}}
+                <v-flex v-for="(i,index) in cateType" :key="index" xs4>
+                  <img
+                    :src="`https://randomuser.me/api/portraits/men/${index + 20}.jpg`"
+                    class="image"
+                    alt="lorem"
+                    width="100%"
+                    height="100%"
+                  >
+                </v-flex>
+              </v-layout>
+            </v-container>
+          </v-card>
+        </v-tab-item>
+      </v-tabs>
+    </v-dialog>
     <v-flex xs12 sm8>
       <v-container grid-list-lg>
         <v-flex xs12>
@@ -88,49 +111,7 @@
     </v-flex>
 
     <!-- Add account -->
-    <v-dialog v-model="addAccountDialog" max-width="600px">
-      <v-card>
-        <v-card-title>
-          <span class="headline">Thêm tài khoản</span>
-        </v-card-title>
-        <v-card-text>
-          <v-form ref="addAccountForm">
-            <v-layout wrap>
-              <v-flex xs12 sm12 md12>
-                <v-text-field label="Số dư ban đầu" value="10.00" prefix="$"></v-text-field>
-              </v-flex>
-              <v-flex xs12 sm12 md12>
-                <v-text-field prepend-icon="featured_play_list" label="Tên tài khoản" required></v-text-field>
-              </v-flex>
-              <v-flex xs12 sm12 md12>
-                <v-select
-                  prepend-icon="help"
-                  :items="['0-17', '18-29', '30-54', '54+']"
-                  label="Loại tài khoản*"
-                  required
-                ></v-select>
-              </v-flex>
-              <v-flex xs12 sm12 md12>
-                <v-select
-                  prepend-icon="attach_money"
-                  :items="['0-17', '18-29', '30-54', '54+']"
-                  label="Đơn vị tiền tệ*"
-                  required
-                ></v-select>
-              </v-flex>
-              <v-flex xs12 sm12 md12>
-                <v-text-field prepend-icon="note" label="Ghi chú" persistent-hint></v-text-field>
-              </v-flex>
-            </v-layout>
-          </v-form>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" flat @click="addAccountDialog = false">Đóng</v-btn>
-          <v-btn color="blue darken-1" flat @click="addAccountDialog = false">Lưu</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+    <add-account-dialog :addAccountDialog="addAccountDialog" @close-dialog="addAccountDialog=false"/>
     <v-dialog v-model="editTotalDialog" max-width="600px">
       <v-card>
         <v-card-title>
@@ -242,13 +223,23 @@ const dummieAccount = [
     total: 2000000
   }
 ]
+
 import firebase from '@/services/fireinit.js'
+import categories from '@/common/categories.js'
+import addAccountDialog from '@/components/wallet/addAccountDialog.vue'
 
 export default {
+  components: { 'add-account-dialog': addAccountDialog },
   data: function() {
     return {
+      categories: categories,
+      categoriesType: ['Tiền vào', 'Tiền ra', 'Ghi nợ'],
+      active: null,
+      text:
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
       total: 0,
-      addAccountDialog: false,
+      addAccountDialog: true,
+      categoriesDialog: false,
       editTotalDialog: false,
       transferDialog: false,
       accountLoading: false,
@@ -284,11 +275,11 @@ export default {
         array.push(snapshot.val()[item])
       })
       this.accountLoading = false
-      if (array.length !== 0){
-       this.total=0;
-       array.forEach((currentValue) => {
-         this.total+= currentValue.balance
-      })
+      if (array.length !== 0) {
+        this.total = 0
+        array.forEach(currentValue => {
+          this.total += currentValue.balance
+        })
       }
       console.log(this.total)
     })
@@ -310,9 +301,6 @@ export default {
     }
   },
   watch: {
-    addAccountDialog() {
-      if (this.addAccountDialog == false) this.$refs.addAccountForm.reset()
-    },
     editTotalDialog() {
       if (this.editTotalDialog == false) this.$refs.editTotalForm.reset()
     }
