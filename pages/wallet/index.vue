@@ -9,7 +9,7 @@
               <div style="width:100%">
                 <h4>Tổng tiền</h4>
                 <v-divider/>
-                <h3 class="headline blue--text mt-2">10.000.000 vnđ</h3>
+                <h3 class="headline blue--text mt-2">{{total }}</h3>
               </div>
             </v-card-title>
           </v-card>
@@ -30,6 +30,13 @@
                     <v-layout v-if="accountLoading" justify-center mt-1>
                       <v-progress-circular indeterminate color="primary"></v-progress-circular>
                     </v-layout>
+                    <v-layout
+                      mt-1
+                      mb-1
+                      style="color:red"
+                      justify-center
+                      v-if="accountLoading==false && account.length===0"
+                    >Hiện chưa có tài khoản nào</v-layout>
                     <v-container
                       v-else
                       class="font-weight-medium"
@@ -245,7 +252,7 @@ export default {
       editTotalDialog: false,
       transferDialog: false,
       accountLoading: false,
-      account: null,
+      account: [],
       items: [
         {
           title: 'Chuyển khoản',
@@ -266,20 +273,27 @@ export default {
     let array = []
     // let totalBalance = 0
     const uid = await firebase.auth().currentUser.uid
-    console.log({ uid })
+    // console.log({ uid })
     var ref = await firebase.database().ref(`${uid}/Account`)
 
     await ref.on('value', snapshot => {
-      this.accountLoading=true;
-      console.log(snapshot)
+      this.accountLoading = true
+      // console.log(snapshot)
       let keys = (snapshot.val() && Object.keys(snapshot.val())) || []
       keys.map((item, index) => {
         array.push(snapshot.val()[item])
       })
+      this.accountLoading = false
+      if (array.length !== 0){
+       this.total=0;
+       array.forEach((currentValue) => {
+         this.total+= currentValue.balance
+      })
+      }
+      console.log(this.total)
     })
-    this.accountLoading=false;
+    this.accountLoading = false
     this.account = array
-    console.log(array)
   },
 
   methods: {

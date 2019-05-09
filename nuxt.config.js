@@ -36,7 +36,8 @@ module.exports = {
   ],
   plugins: [
     { src: '@/plugins/vuetify' },
-    '~/plugins/fireauth.js'
+    '~/plugins/fireauth.js',
+    '~/plugins/currency-filter.js'
 
   ],
 
