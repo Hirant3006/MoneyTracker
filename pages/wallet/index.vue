@@ -1,28 +1,5 @@
 <template>
   <v-layout justify-center align-center>
-    <v-dialog v-model="categoriesDialog" max-width="600px">
-      <v-tabs v-model="active" slider-color="cyan">
-        <v-tab v-for="type in categoriesType" :key="type" ripple>{{ type}}</v-tab>
-        <v-tab-item v-for="(cateType,index) in categories" :key="index">
-          <v-card flat>
-            <v-container fluid grid-list-sm>
-              <v-layout row wrap>
-                {{cateType}}
-                <v-flex v-for="(i,index) in cateType" :key="index" xs4>
-                  <img
-                    :src="`https://randomuser.me/api/portraits/men/${index + 20}.jpg`"
-                    class="image"
-                    alt="lorem"
-                    width="100%"
-                    height="100%"
-                  >
-                </v-flex>
-              </v-layout>
-            </v-container>
-          </v-card>
-        </v-tab-item>
-      </v-tabs>
-    </v-dialog>
     <v-flex xs12 sm8>
       <v-container grid-list-lg>
         <v-flex xs12>
@@ -111,7 +88,10 @@
     </v-flex>
 
     <!-- Add account -->
-    <add-account-dialog :addAccountDialog="addAccountDialog" @close-dialog="addAccountDialog=false"/>
+    <add-account-dialog
+      :addAccountDialog="addAccountDialog"
+      @close-dialog="addAccountDialog=false"
+    />
     <v-dialog v-model="editTotalDialog" max-width="600px">
       <v-card>
         <v-card-title>
@@ -225,20 +205,17 @@ const dummieAccount = [
 ]
 
 import firebase from '@/services/fireinit.js'
-import categories from '@/common/categories.js'
 import addAccountDialog from '@/components/wallet/addAccountDialog.vue'
 
 export default {
   components: { 'add-account-dialog': addAccountDialog },
   data: function() {
     return {
-      categories: categories,
-      categoriesType: ['Tiền vào', 'Tiền ra', 'Ghi nợ'],
       active: null,
       text:
         'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
       total: 0,
-      addAccountDialog: true,
+      addAccountDialog: false,
       categoriesDialog: false,
       editTotalDialog: false,
       transferDialog: false,
@@ -261,30 +238,7 @@ export default {
     }
   },
   async mounted() {
-    let array = []
-    // let totalBalance = 0
-    const uid = await firebase.auth().currentUser.uid
-    // console.log({ uid })
-    var ref = await firebase.database().ref(`${uid}/Account`)
-
-    await ref.on('value', snapshot => {
-      this.accountLoading = true
-      // console.log(snapshot)
-      let keys = (snapshot.val() && Object.keys(snapshot.val())) || []
-      keys.map((item, index) => {
-        array.push(snapshot.val()[item])
-      })
-      this.accountLoading = false
-      if (array.length !== 0) {
-        this.total = 0
-        array.forEach(currentValue => {
-          this.total += currentValue.balance
-        })
-      }
-      console.log(this.total)
-    })
-    this.accountLoading = false
-    this.account = array
+    this.readAccountData();
   },
 
   methods: {
@@ -295,9 +249,29 @@ export default {
       this.addAccountDialog = true
     },
     onToggleMore(info, item) {
-      console.log({ info }, { item })
       if (info.title === 'Điều chỉnh số dư') this.editTotalDialog = true
       if (info.title === 'Chuyển khoản') this.transferDialog = true
+    },
+    async readAccountData() {
+      let array = []
+      let totalBalance = 0
+      const uid = await firebase.auth().currentUser.uid
+      var ref = await firebase.database().ref(`${uid}/Account`)
+
+      await ref.on('value', snapshot => {
+        this.accountLoading = true
+        let keys = (snapshot.val() && Object.keys(snapshot.val())) || []
+        keys.map((item, index) => {
+          array.push(snapshot.val()[item])
+          totalBalance = totalBalance + snapshot.val()[item].balance
+          console.log('Array ', array)
+        })
+        this.accountLoading = false
+        this.total = totalBalance
+        this.account = array
+      })
+      totalBalance = 0
+      array = []
     }
   },
   watch: {
