@@ -9,7 +9,7 @@
               <div style="width:100%">
                 <h4>Tổng tiền</h4>
                 <v-divider/>
-                <h3 class="headline blue--text mt-2">{{total }}</h3>
+                <h3 class="headline blue--text mt-2">{{ formatPrice(total) }} vnđ</h3>
               </div>
             </v-card-title>
           </v-card>
@@ -37,25 +37,26 @@
                       justify-center
                       v-if="accountLoading==false && account.length===0"
                     >Hiện chưa có tài khoản nào</v-layout>
-                    <v-container
+                    <div
                       v-else
                       class="font-weight-medium"
                       v-for="(item,index) in account"
                       :key="index"
+                      style="padding:0"
                     >
                       <v-divider class="mb-2"/>
-                      <v-layout justify-space-between mt-4>
+                      <v-layout justify-space-between mt-4 mb-2 align-center>
                         <v-layout class="ml-2">
                           <v-avatar :size="40" color=" lighten-4">
                             <img
-                              src="https://vuetifyjs.com/apple-touch-icon-180x180.png"
+                              :src="accountIcon(item)"
                               alt="avatar"
                             >
                           </v-avatar>
-                          <div class="ml-3">
+                          <div class="ml-3" >
                             <span>{{item.accountType}}</span>
                             <br>
-                            <span>{{item.balance}}</span>
+                            <span>{{formatPrice(item.balance)}} vnđ</span>
                           </div>
                         </v-layout>
 
@@ -77,7 +78,7 @@
                           </v-list>
                         </v-menu>
                       </v-layout>
-                    </v-container>
+                    </div>
                   </v-list>
                 </div>
               </v-card-title>
@@ -206,6 +207,7 @@ const dummieAccount = [
 
 import firebase from '@/services/fireinit.js'
 import addAccountDialog from '@/components/wallet/addAccountDialog.vue'
+import listAccountType from '@/common/accountType.js'
 
 export default {
   components: { 'add-account-dialog': addAccountDialog },
@@ -238,10 +240,24 @@ export default {
     }
   },
   async mounted() {
-    this.readAccountData();
+    this.readAccountData()
   },
 
   methods: {
+    accountIcon(item){
+      switch (item.accountType) {
+            case "Thẻ tín dụng":
+                return require('@/assets/Image/credit-card.png')
+            case "Tiền mặt":
+                return require('@/assets/Image/cash.png')
+            case "Tài khoản ngân hàng":
+                return require('@/assets/Image/bank.png')
+            case "Tài khoản khác":
+                return require('@/assets/Image/money.png')
+            default:
+                return require('@/assets/Image/question-mark.png')
+        }
+    },
     onClickAccount(e) {
       // if (e.target.textContent==="Chuyển khoản")
     },
@@ -272,6 +288,10 @@ export default {
       })
       totalBalance = 0
       array = []
+    },
+    formatPrice(value) {
+      let val = (value / 1).toFixed(0).replace('.', ',')
+      return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
     }
   },
   watch: {

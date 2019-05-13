@@ -8,7 +8,7 @@
         <v-form ref="addAccountForm">
           <v-layout wrap>
             <v-flex xs12 sm12 md12>
-              <v-text-field label="Số dư ban đầu" type="number" v-model="balance" prefix="đ"></v-text-field>
+              <v-text-field label="Số dư ban đầu" type="number" v-model="balance" prefix="đ">balance</v-text-field>
             </v-flex>
             <v-flex xs12 sm12 md12>
               <v-text-field
@@ -22,7 +22,7 @@
               <v-text-field
                 prepend-icon="help"
                 label="Loại tài khoản"
-                @click="categoriesDialog=true"
+                @click="accountTypeDialog=true"
                 required
                 v-model="accountType"
               ></v-text-field>
@@ -39,6 +39,24 @@
         <v-btn color="blue darken-1" flat @click="onPressAddAcount()">Lưu</v-btn>
       </v-card-actions>
     </v-card>
+    <v-dialog v-model="accountTypeDialog" width="400px">
+      <v-card>
+        <v-card-title style="padding-bottom:0px">
+          <span class="headline">Chọn loại tài khoản</span>
+        </v-card-title>
+        <v-layout mt-2 pl-2 pr-2 justify-space-around >
+          <div  style="display:flex;flex-direction:column;align-items:center;text-align:center;width:70px;cusor:pointer"
+                class="mt-2 ml-1 mr-1 mb-3"
+                v-for="(item,index) in listAccountType"
+                :key="index"
+                xs4
+                @click="onClickAccountType(item)">
+            <img :src="item.icon" class="image" alt="item.icon" width="50px" height="50px">
+            <span>{{item.name}}</span>
+          </div>
+        </v-layout>
+      </v-card>
+    </v-dialog>
     <v-dialog v-model="categoriesDialog" width="400px">
       <v-tabs v-model="active" slider-color="cyan">
         <v-tab v-for="type in categoriesType" :key="type" ripple>{{ type}}</v-tab>
@@ -99,7 +117,7 @@
 import firebase from '@/services/fireinit.js'
 import categories from '@/common/categories.js'
 import { mapMutations } from 'vuex'
-
+import listAccountType from '@/common/accountType.js'
 export default {
   data: function() {
     return {
@@ -107,6 +125,8 @@ export default {
       categoriesDialog: false,
       active: null,
       accountType: null,
+      listAccountType: listAccountType,
+      accountTypeDialog: false,
       balance: null,
       name: null,
       note: null,
@@ -119,15 +139,18 @@ export default {
       required: true
     }
   },
-  mounted() {
-  },
+  mounted() {},
   methods: {
     ...mapMutations({
       setSnack: 'snackbar/setSnack'
     }),
+    formatPrice(value) {
+        let val = (value/1).toFixed(2).replace('.', ',')
+        return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+    },
     onClickAccountType(item) {
       this.accountType = item.name
-      this.categoriesDialog = false
+      this.accountTypeDialog = false
     },
     async writeAccountData() {
       const uid = await firebase.auth().currentUser.uid
