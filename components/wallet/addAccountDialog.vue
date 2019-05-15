@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="addAccountDialog" max-width="600px">
+  <v-dialog v-model="addAccountDialog" max-width="600px" persistent>
     <v-card>
       <v-card-title>
         <span class="headline">Thêm tài khoản</span>

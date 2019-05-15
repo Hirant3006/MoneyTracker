@@ -91,7 +91,12 @@
       @close-dialog="addAccountDialog=false"
     />
     <!-- Transfer account -->
-
+    <transfer-account-dialog
+      :transferDialog="transferDialog"
+      @close-dialog="transferDialog=false"
+      :accountItem="transferAccountItem"
+      :accountList="account"
+    />
     <v-dialog v-model="editTotalDialog" max-width="600px">
       <v-card>
         <v-card-title>
@@ -136,7 +141,7 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    
+
     <v-dialog v-model="confirmDialog" persistent max-width="290">
       <v-card>
         <v-card-title class="headline">
@@ -180,7 +185,10 @@ import { mapMutations } from 'vuex'
 import moment from 'moment'
 
 export default {
-  components: { 'add-account-dialog': addAccountDialog,'transfer-account-dialog': transferAccountDialog },
+  components: {
+    'add-account-dialog': addAccountDialog,
+    'transfer-account-dialog': transferAccountDialog
+  },
   data: function() {
     return {
       active: null,
@@ -196,6 +204,7 @@ export default {
       confirmDialog: false,
       deleteItem: null,
       account: [],
+      transferAccountItem: null,
       items: [
         {
           title: 'Chuyển khoản',
@@ -241,8 +250,13 @@ export default {
       this.addAccountDialog = true
     },
     onToggleMore(info, item) {
-      if (info.title === 'Điều chỉnh số dư') this.editTotalDialog = true
-      if (info.title === 'Chuyển khoản') this.transferDialog = true
+      if (info.title === 'Điều chỉnh số dư') {
+        this.editTotalDialog = true
+      }
+      if (info.title === 'Chuyển khoản') {
+        this.transferDialog = true
+        this.transferAccountItem = item
+      }
       if (info.title === 'Xóa') {
         this.confirmDialog = true
         this.deleteItem = item
