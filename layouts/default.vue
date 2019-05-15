@@ -12,7 +12,7 @@
         </v-list-tile>
       </v-list>
     </v-navigation-drawer>
-    <v-toolbar app>
+    <v-toolbar v-if="user" app>
       <v-btn v-if="user" icon @click.native.stop="drawer = !drawer">
         <v-icon>menu</v-icon>
       </v-btn>
@@ -188,7 +188,7 @@ export default {
         { title: 'Thống kê theo tháng', icon: 'equalizer' },
         { title: 'Đăng xuất', icon: 'logout' }
       ],
-      title: 'Money tracker',
+      title: 'I love money',
       menu: false,
       addDealDialog: false,
       addRecordDialog: false

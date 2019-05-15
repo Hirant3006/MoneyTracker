@@ -1,7 +1,8 @@
 <template>
   <v-layout>
     <v-flex text-xs-center xs12 sm6 offset-sm3>
-      Logo
+      <img :src="require('@/assets/Image/cash.png')" alt="logo" width="50px" height="50px" >
+      <h3 class="mb-5"> I love money </h3>
       <v-text-field
         prepend-icon="person"
         name="login"
@@ -115,17 +116,6 @@ export default {
         .then(() => {
           console.log('inside then statement on login')
         })
-        .catch(e => {
-          this.setSnack({ msg: e.message, color: 'error' })
-        })
-    },
-    emailSignUp() {
-      this.$store
-        .dispatch('user/signUp', {
-          email: 'lychautrinha@gmail.com',
-          password: 'lychautrinha'
-        })
-        .then(this.setSnack({ msg: 'Đăng nhập thành công', color: 'success' }))
         .catch(e => {
           this.setSnack({ msg: e.message, color: 'error' })
         })
