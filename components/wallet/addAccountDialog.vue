@@ -118,6 +118,7 @@ import firebase from '@/services/fireinit.js'
 import categories from '@/common/categories.js'
 import { mapMutations } from 'vuex'
 import listAccountType from '@/common/accountType.js'
+
 export default {
   data: function() {
     return {

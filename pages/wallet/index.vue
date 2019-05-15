@@ -9,7 +9,7 @@
               <div style="width:100%">
                 <h4>Tổng tiền</h4>
                 <v-divider/>
-                <h3 class="headline blue--text mt-2">{{ formatPrice(total) }} vnđ</h3>
+                <h3 class="headline blue--text mt-2">{{ formatPrice(total) }} đ</h3>
               </div>
             </v-card-title>
           </v-card>
@@ -48,15 +48,12 @@
                       <v-layout justify-space-between mt-4 mb-2 align-center>
                         <v-layout class="ml-2">
                           <v-avatar :size="40" color=" lighten-4">
-                            <img
-                              :src="accountIcon(item)"
-                              alt="avatar"
-                            >
+                            <img :src="accountIcon(item)" alt="avatar">
                           </v-avatar>
-                          <div class="ml-3" >
-                            <span>{{item.accountType}}</span>
+                          <div class="ml-3">
+                            <span>{{item.name}}</span>
                             <br>
-                            <span>{{formatPrice(item.balance)}} vnđ</span>
+                            <span>{{formatPrice(item.balance)}} đ</span>
                           </div>
                         </v-layout>
 
@@ -93,6 +90,8 @@
       :addAccountDialog="addAccountDialog"
       @close-dialog="addAccountDialog=false"
     />
+    <!-- Transfer account -->
+
     <v-dialog v-model="editTotalDialog" max-width="600px">
       <v-card>
         <v-card-title>
@@ -137,52 +136,20 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <v-dialog v-model="transferDialog" max-width="600px">
+    
+    <v-dialog v-model="confirmDialog" persistent max-width="290">
       <v-card>
-        <v-card-title>
-          <span class="headline">Chuyển khoản</span>
+        <v-card-title class="headline">
+          <h4>Bạn muốn xoá ví này ?</h4>
+          <br>
+          <span
+            class="caption"
+          >**Lưu ý khi bạn xoá tài khoản tất cả các giao dịch của tài khoản này sẽ bị xoá theo</span>
         </v-card-title>
-        <v-card-text>
-          <v-form ref="transferForm">
-            <v-layout wrap>
-              <v-flex xs12 sm12 md12>
-                <v-text-field label="Số tiền" value="10.00" prefix="$"></v-text-field>
-              </v-flex>
-              <v-flex xs12 sm12 md12>
-                <v-select
-                  prepend-icon="featured_play_list"
-                  :items="['0-17', '18-29', '30-54', '54+']"
-                  label="Từ tài khoản*"
-                  required
-                ></v-select>
-              </v-flex>
-              <v-flex xs12 sm12 md12>
-                <v-select
-                  prepend-icon="featured_play_list"
-                  :items="['0-17', '18-29', '30-54', '54+']"
-                  label="Đến tài khoản*"
-                  required
-                ></v-select>
-              </v-flex>
-              <v-spacer></v-spacer>
-              <v-layout justify-space-between>
-                <v-flex xs9 sm9 md9>
-                  <v-text-field prepend-icon="calendar_today" label="Ngày" required></v-text-field>
-                </v-flex>
-                <v-flex xs3 sm3 md3>
-                  <v-text-field prepend-icon="access_time" label="Giờ" required></v-text-field>
-                </v-flex>
-              </v-layout>
-              <v-flex xs12 sm12 md12>
-                <v-text-field prepend-icon="note" label="Ghi chú" persistent-hint></v-text-field>
-              </v-flex>
-            </v-layout>
-          </v-form>
-        </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" flat @click="transferDialog = false">Đóng</v-btn>
-          <v-btn color="blue darken-1" flat @click="transferDialog = false">Lưu</v-btn>
+          <v-btn color="green darken-1" flat @click="confirmDialog = false">Không</v-btn>
+          <v-btn color="green darken-1" flat @click="onSelectDeleteAccount">Có</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -207,13 +174,17 @@ const dummieAccount = [
 
 import firebase from '@/services/fireinit.js'
 import addAccountDialog from '@/components/wallet/addAccountDialog.vue'
+import transferAccountDialog from '@/components/wallet/transferAccountDialog.vue'
 import listAccountType from '@/common/accountType.js'
+import { mapMutations } from 'vuex'
+import moment from 'moment'
 
 export default {
-  components: { 'add-account-dialog': addAccountDialog },
+  components: { 'add-account-dialog': addAccountDialog,'transfer-account-dialog': transferAccountDialog },
   data: function() {
     return {
       active: null,
+      uid: firebase.auth().currentUser.uid,
       text:
         'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
       total: 0,
@@ -222,6 +193,8 @@ export default {
       editTotalDialog: false,
       transferDialog: false,
       accountLoading: false,
+      confirmDialog: false,
+      deleteItem: null,
       account: [],
       items: [
         {
@@ -244,19 +217,22 @@ export default {
   },
 
   methods: {
-    accountIcon(item){
+    ...mapMutations({
+      setSnack: 'snackbar/setSnack'
+    }),
+    accountIcon(item) {
       switch (item.accountType) {
-            case "Thẻ tín dụng":
-                return require('@/assets/Image/credit-card.png')
-            case "Tiền mặt":
-                return require('@/assets/Image/cash.png')
-            case "Tài khoản ngân hàng":
-                return require('@/assets/Image/bank.png')
-            case "Tài khoản khác":
-                return require('@/assets/Image/money.png')
-            default:
-                return require('@/assets/Image/question-mark.png')
-        }
+        case 'Thẻ tín dụng':
+          return require('@/assets/Image/credit-card.png')
+        case 'Tiền mặt':
+          return require('@/assets/Image/cash.png')
+        case 'Tài khoản ngân hàng':
+          return require('@/assets/Image/bank.png')
+        case 'Tài khoản khác':
+          return require('@/assets/Image/money.png')
+        default:
+          return require('@/assets/Image/question-mark.png')
+      }
     },
     onClickAccount(e) {
       // if (e.target.textContent==="Chuyển khoản")
@@ -267,6 +243,10 @@ export default {
     onToggleMore(info, item) {
       if (info.title === 'Điều chỉnh số dư') this.editTotalDialog = true
       if (info.title === 'Chuyển khoản') this.transferDialog = true
+      if (info.title === 'Xóa') {
+        this.confirmDialog = true
+        this.deleteItem = item
+      }
     },
     async readAccountData() {
       let array = []
@@ -280,18 +260,69 @@ export default {
         keys.map((item, index) => {
           array.push(snapshot.val()[item])
           totalBalance = totalBalance + snapshot.val()[item].balance
-          console.log('Array ', array)
         })
         this.accountLoading = false
         this.total = totalBalance
         this.account = array
+        totalBalance = 0
+        array = []
       })
-      totalBalance = 0
-      array = []
     },
     formatPrice(value) {
       let val = (value / 1).toFixed(0).replace('.', ',')
       return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+    },
+    async onSelectDeleteAccount() {
+      await firebase
+        .database()
+        .ref(`${this.uid}/Account/${this.deleteItem.key}`)
+        .remove()
+      this.setSnack({ msg: 'Xóa ví thành công', color: 'success' })
+      this.confirmDialog = false
+      await firebase
+        .database()
+        .ref(`${this.uid}/Deals/${this.deleteItem.key}`)
+        .remove()
+      await firebase
+        .database()
+        .ref(`${this.uid}/Borrow/${this.deleteItem.key}`)
+        .remove()
+      await firebase
+        .database()
+        .ref(`${this.uid}/Lend/${this.deleteItem.key}`)
+        .remove()
+      for (var j = 0; j < 12; j++) {
+        var month = (j + 1).toString()
+        for (var i = 0; i < 31; i++) {
+          var day = (i + 1).toString()
+          await firebase
+            .database()
+            .ref(
+              `${this.uid}/TotalDeals/${moment().format(
+                'YYYY'
+              )}/${month}/${day}`
+            )
+            .once('value', async snapshot => {
+              let keys = (snapshot.val() && Object.keys(snapshot.val())) || []
+              if (keys.length != 0) {
+                keys.map(async (item, index) => {
+                  if (snapshot.val()[item].accountKey === key) {
+                    await firebase
+                      .database()
+                      .ref(
+                        `${this.uid}/TotalDeals/${moment(
+                          snapshot.val()[item].date
+                        ).format('YYYY/M/D')}/${snapshot
+                          .val()
+                          [item].key.toString()}`
+                      )
+                      .remove()
+                  }
+                })
+              }
+            })
+        }
+      }
     }
   },
   watch: {

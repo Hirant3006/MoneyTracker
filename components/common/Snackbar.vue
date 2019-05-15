@@ -18,7 +18,6 @@ export default {
     this.$store.watch(
       state => state.snackbar.snack,
       () => {
-        console.log('Vue ',this.$store.state.snackbar)
         const msg = this.$store.state.snackbar.snack
         if (msg !== '') {
           // console.log('state ', this.$store.state)

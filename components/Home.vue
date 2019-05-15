@@ -8,7 +8,7 @@
             <div style="width:100%">
               <h4 class>Tài chính hiện tại</h4>
               <v-divider/>
-              <h3 class="headline blue--text mt-2">10.000.000 vnđ</h3>
+              <h3 class="headline blue--text mt-2">10.000.000 đ</h3>
             </div>
           </v-card-title>
         </v-card>
