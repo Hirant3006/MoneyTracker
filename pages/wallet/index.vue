@@ -97,6 +97,12 @@
       :accountItem="transferAccountItem"
       :accountList="account"
     />
+    <edit-account-dialog
+      :editDialog="editDialog"
+      @close-dialog="editDialog=false"
+      :accountItem="editAccountItem"
+      :accountList="account"
+    />
     <v-dialog v-model="editTotalDialog" max-width="600px">
       <v-card>
         <v-card-title>
@@ -180,6 +186,7 @@ const dummieAccount = [
 import firebase from '@/services/fireinit.js'
 import addAccountDialog from '@/components/wallet/addAccountDialog.vue'
 import transferAccountDialog from '@/components/wallet/transferAccountDialog.vue'
+import editAccountDialog from '@/components/wallet/editAccountDialog.vue'
 import listAccountType from '@/common/accountType.js'
 import { mapMutations } from 'vuex'
 import moment from 'moment'
@@ -187,7 +194,8 @@ import moment from 'moment'
 export default {
   components: {
     'add-account-dialog': addAccountDialog,
-    'transfer-account-dialog': transferAccountDialog
+    'transfer-account-dialog': transferAccountDialog,
+    'edit-account-dialog': editAccountDialog
   },
   data: function() {
     return {
@@ -202,7 +210,9 @@ export default {
       transferDialog: false,
       accountLoading: false,
       confirmDialog: false,
+      editDialog: false,
       deleteItem: null,
+      editAccountItem: null,
       account: [],
       transferAccountItem: null,
       items: [
@@ -260,6 +270,10 @@ export default {
       if (info.title === 'Xóa') {
         this.confirmDialog = true
         this.deleteItem = item
+      }
+      if (info.title === 'Sửa') {
+        this.editDialog = true
+        this.editAccountItem = item 
       }
     },
     async readAccountData() {
