@@ -2,7 +2,7 @@
   <v-layout>
     <v-flex text-xs-center xs12 sm6 offset-sm3>
       <img :src="require('@/assets/Image/cash.png')" alt="logo" width="50px" height="50px" >
-      <h3 class="mb-5"> I love money </h3>
+      <h3 class="mb-4"> I love money </h3>
       <v-text-field
         prepend-icon="person"
         name="login"
