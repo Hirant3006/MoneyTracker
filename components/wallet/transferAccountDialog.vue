@@ -37,9 +37,7 @@
               <v-dialog
                 ref="dialog"
                 v-model="modaldate"
-                :return-value.sync="date"
                 persistent
-                lazy
                 full-width
                 width="290px"
               >
@@ -52,17 +50,16 @@
                     v-on="on"
                   ></v-text-field>
                 </template>
-                <v-date-picker v-model="date" scrollable>
-                  <v-spacer></v-spacer>
+                <v-date-picker v-model="date" scrollable  @click="modaldate = false">
+                  <!-- <v-spacer></v-spacer>
                   <v-btn flat color="primary" @click="modaldate = false">Cancel</v-btn>
-                  <v-btn flat color="primary" @click="$refs.dialog.save(date)">OK</v-btn>
+                  <v-btn flat color="primary" @click="onSaveDate(date)">OK</v-btn> -->
                 </v-date-picker>
               </v-dialog>
               <v-flex xs3 sm3 md3>
                 <v-dialog
                   ref="dialog"
                   v-model="modaltime"
-                  :return-value.sync="time"
                   persistent
                   lazy
                   full-width
@@ -128,6 +125,10 @@ export default {
     }
   },
   methods: {
+    onSaveDate(date) {
+      this.$refs.dialog.save(date);
+      this.modaldate=false;
+    },
     ...mapMutations({
       setSnack: 'snackbar/setSnack'
     }),
@@ -300,6 +301,7 @@ export default {
   watch: {
     date() {
       console.log(this.date)
+      this.modaldate=false;
     }
   }
 }

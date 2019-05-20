@@ -1,170 +1,210 @@
 <template>
-  <v-layout justify-center align-center>
-    <v-flex xs12 sm8>
-      <v-container grid-list-lg>
-        <v-flex xs12>
-          <h2 class="mb-4">Tài khoản</h2>
-          <v-card color class="dark--text">
-            <v-card-title primary-title>
-              <div style="width:100%">
-                <h4>Tổng tiền</h4>
-                <v-divider/>
-                <h3 class="headline blue--text mt-2">{{ formatPrice(total) }} đ</h3>
-              </div>
-            </v-card-title>
-          </v-card>
-        </v-flex>
-
-        <v-layout justify-space-between row wrap>
-          <v-flex xs12 sm12 md12 lg12 xl12>
-            <v-card>
-              <v-card-title primary-title>
-                <div style="width:100%">
-                  <v-layout pl-1 pr-1 justify-space-between>
-                    <h4 style="align-self:center">Tài khoản</h4>
-                    <v-btn icon>
-                      <v-icon @click="toggleModalAddAccount">add</v-icon>
-                    </v-btn>
-                  </v-layout>
-                  <v-list>
-                    <v-layout v-if="accountLoading" justify-center mt-1>
-                      <v-progress-circular indeterminate color="primary"></v-progress-circular>
-                    </v-layout>
-                    <v-layout
-                      mt-1
-                      mb-1
-                      style="color:red"
-                      justify-center
-                      v-if="accountLoading==false && account.length===0"
-                    >Hiện chưa có tài khoản nào</v-layout>
-                    <div
-                      v-else
-                      class="font-weight-medium"
-                      v-for="(item,index) in account"
-                      :key="index"
-                      style="padding:0"
-                    >
-                      <v-divider class="mb-2"/>
-                      <v-layout justify-space-between mt-4 mb-2 align-center>
-                        <v-layout class="ml-2">
-                          <v-avatar :size="40" color=" lighten-4">
-                            <img :src="accountIcon(item)" alt="avatar">
-                          </v-avatar>
-                          <div class="ml-3">
-                            <span>{{item.name}}</span>
-                            <br>
-                            <span>{{formatPrice(item.balance)}} đ</span>
-                          </div>
-                        </v-layout>
-
-                        <v-menu offset-y>
-                          <template v-slot:activator="{ on }">
-                            <v-btn flat icon v-on="on">
-                              <v-icon>more_vert</v-icon>
-                            </v-btn>
-                          </template>
-                          <v-list>
-                            <v-list-tile
-                              v-for="(info, index) in items"
-                              :key="index"
-                              @click="onToggleMore(info,item)"
-                            >
-                              <v-icon style="margin-right: 20px;" class>{{info.icon}}</v-icon>
-                              <v-list-tile-title>{{ info.title }}</v-list-tile-title>
-                            </v-list-tile>
-                          </v-list>
-                        </v-menu>
+  <div>
+    <v-layout justify-center align-center column>
+      <v-flex xs12 sm8>
+        <v-container grid-list-lg>
+          <v-layout v-if="account.length!==0" justify-space-between row wrap>
+            <v-flex xs12 sm12 md12 lg12 xl12>
+              <v-card>
+                <v-card-title primary-title>
+                  <v-layout pl-1 pr-1 justify-center>
+                    <div class="selectedAccount">
+                      <v-layout
+                        style="border:1px solid #E0E0E0;border-radius:5px;cursor:pointer"
+                        @click="accountListDialog=true"
+                        pa-3
+                        mr-4
+                        class
+                        justify-space-around
+                        mt-2
+                        mb-2
+                        ml-2
+                        align-center
+                      >
+                        <v-avatar :size="70" color=" lighten-4">
+                          <img :src="accountIcon(account[selectedAccountIndex])" alt="avatar">
+                        </v-avatar>
+                        <div class="ml-2 mr-5" style="display:flex;flex-direction:column">
+                          <span class="headline">{{account[selectedAccountIndex].name}}</span>
+                          <span
+                            class="subheading"
+                            style="color:#80CBC4"
+                          >{{formatPrice(account[selectedAccountIndex].balance)}} đ</span>
+                        </div>
+                        <v-icon>expand_more</v-icon>
                       </v-layout>
                     </div>
-                  </v-list>
-                </div>
-              </v-card-title>
-            </v-card>
-          </v-flex>
-        </v-layout>
-      </v-container>
-    </v-flex>
+                    <v-menu offset-y>
+                      <template v-slot:activator="{ on }">
+                        <v-btn flat icon v-on="on">
+                          <v-icon>more_vert</v-icon>
+                        </v-btn>
+                      </template>
+                      <v-list>
+                        <v-list-tile
+                          v-for="(info, index) in items"
+                          :key="index"
+                          @click="onToggleMore(info,item)"
+                        >
+                          <v-icon style="margin-right: 20px;" class>{{info.icon}}</v-icon>
+                          <v-list-tile-title>{{ info.title }}</v-list-tile-title>
+                        </v-list-tile>
+                      </v-list>
+                    </v-menu>
+                  </v-layout>
+                </v-card-title>
+              </v-card>
+            </v-flex>
+          </v-layout>
+          <v-layout v-if="account.length!==0" justify-space-between row wrap>
+            <v-flex xs12 sm12 md12 lg12 xl12>
+              <v-card>asdsad</v-card>
+            </v-flex>
+          </v-layout>
+        </v-container>
+      </v-flex>
 
-    <!-- Add account -->
-    <add-account-dialog
-      :addAccountDialog="addAccountDialog"
-      @close-dialog="addAccountDialog=false"
-    />
-    <!-- Transfer account -->
-    <transfer-account-dialog
-      :transferDialog="transferDialog"
-      @close-dialog="transferDialog=false"
-      :accountItem="transferAccountItem"
-      :accountList="account"
-    />
-    <edit-account-dialog
-      :editDialog="editDialog"
-      @close-dialog="editDialog=false"
-      :accountItem="editAccountItem"
-      :accountList="account"
-    />
-    <v-dialog v-model="editTotalDialog" max-width="600px">
-      <v-card>
-        <v-card-title>
-          <span class="headline">Điều chỉnh số dư</span>
-        </v-card-title>
-        <v-card-text>
-          <v-form ref="editTotalForm">
-            <v-layout wrap>
-              <v-flex xs12 sm12 md12>
-                <v-text-field prepend-icon="featured_play_list" label="Chọn tài khoản" required></v-text-field>
-              </v-flex>
-              <v-layout justify-space-between>
-                <v-flex xs9 sm9 md9>
-                  <v-text-field prepend-icon="calendar_today" label="Ngày" required></v-text-field>
+      <v-dialog v-model="accountListDialog" max-width="600px" style="height:300px">
+        <v-card>
+          <v-card-title>
+            <span class="headline">Danh sách tài khoản</span>
+          </v-card-title>
+          <v-card-text>
+            <v-list>
+              <v-layout v-if="accountLoading" justify-center mt-1>
+                <v-progress-circular indeterminate color="primary"></v-progress-circular>
+              </v-layout>
+              <v-layout
+                mt-1
+                mb-1
+                style="color:red"
+                justify-center
+                v-if="accountLoading==false && account.length===0"
+              >Hiện chưa có tài khoản nào</v-layout>
+              <div
+                v-else
+                class="font-weight-medium"
+                v-for="(item,index) in account"
+                :key="index"
+                @click="selectedAccountIndex=index"
+              >
+                <v-divider class="mb-2"/>
+                <v-layout justify-space-between mt-2 mb-2 align-center>
+                  <v-layout class="ml-2">
+                    <v-avatar :size="40" color=" lighten-4">
+                      <img :src="accountIcon(item)" alt="avatar">
+                    </v-avatar>
+                    <div class="ml-3">
+                      <span>{{item.name}}</span>
+                      <br>
+                      <span>{{formatPrice(item.balance)}} đ</span>
+                    </div>
+                  </v-layout>
+
+                  <v-menu offset-y>
+                    <template v-slot:activator="{ on }">
+                      <v-btn flat icon v-on="on">
+                        <v-icon>more_vert</v-icon>
+                      </v-btn>
+                    </template>
+                    <v-list>
+                      <v-list-tile
+                        v-for="(info, index) in items"
+                        :key="index"
+                        @click="onToggleMore(info,item)"
+                      >
+                        <v-icon style="margin-right: 20px;" class>{{info.icon}}</v-icon>
+                        <v-list-tile-title>{{ info.title }}</v-list-tile-title>
+                      </v-list-tile>
+                    </v-list>
+                  </v-menu>
+                </v-layout>
+              </div>
+            </v-list>
+          </v-card-text>
+        </v-card>
+      </v-dialog>
+      <!-- Add account -->
+      <add-account-dialog
+        :addAccountDialog="addAccountDialog"
+        @close-dialog="addAccountDialog=false"
+      />
+      <!-- Transfer account -->
+      <transfer-account-dialog
+        :transferDialog="transferDialog"
+        @close-dialog="transferDialog=false"
+        :accountItem="transferAccountItem"
+        :accountList="account"
+      />
+      <edit-account-dialog
+        :editDialog="editDialog"
+        @close-dialog="editDialog=false"
+        :accountItem="editAccountItem"
+        :accountList="account"
+      />
+      <v-dialog v-model="editTotalDialog" max-width="600px" persistent style="height:40px">
+        <v-card>
+          <v-card-title>
+            <span class="headline">Điều chỉnh số dư</span>
+          </v-card-title>
+          <v-card-text>
+            <v-form ref="editTotalForm">
+              <v-layout wrap>
+                <v-flex xs12 sm12 md12>
+                  <v-text-field prepend-icon="featured_play_list" label="Chọn tài khoản" required></v-text-field>
                 </v-flex>
-                <v-flex xs3 sm3 md3>
-                  <v-text-field prepend-icon="access_time" label="Giờ" required></v-text-field>
+                <v-layout justify-space-between>
+                  <v-flex xs9 sm9 md9>
+                    <v-text-field prepend-icon="calendar_today" label="Ngày" required></v-text-field>
+                  </v-flex>
+                  <v-flex xs3 sm3 md3>
+                    <v-text-field prepend-icon="access_time" label="Giờ" required></v-text-field>
+                  </v-flex>
+                </v-layout>
+                <v-layout justify-space-between ml-1 mr-1 mt-1>
+                  <h4>Số dư trên tài khoản</h4>
+                  <h4>5.000.000đ</h4>
+                </v-layout>
+                <v-flex xs12 sm12 md12>
+                  <v-text-field label="Số dư thực tế" required></v-text-field>
+                </v-flex>
+                <v-layout justify-space-between ml-1 mr-1>
+                  <h5>Chênh lệch</h5>
+                  <h5>0đ</h5>
+                </v-layout>
+
+                <v-flex xs12 sm12 md12>
+                  <v-text-field prepend-icon="note" label="Ghi chú" persistent-hint></v-text-field>
                 </v-flex>
               </v-layout>
-              <v-layout justify-space-between ml-1 mr-1 mt-1>
-                <h4>Số dư trên tài khoản</h4>
-                <h4>5.000.000đ</h4>
-              </v-layout>
-              <v-flex xs12 sm12 md12>
-                <v-text-field label="Số dư thực tế" required></v-text-field>
-              </v-flex>
-              <v-layout justify-space-between ml-1 mr-1>
-                <h5>Chênh lệch</h5>
-                <h5>0đ</h5>
-              </v-layout>
+            </v-form>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="blue darken-1" flat @click="editTotalDialog = false">Đóng</v-btn>
+            <v-btn color="blue darken-1" flat @click="editTotalDialog = false">Lưu</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
 
-              <v-flex xs12 sm12 md12>
-                <v-text-field prepend-icon="note" label="Ghi chú" persistent-hint></v-text-field>
-              </v-flex>
-            </v-layout>
-          </v-form>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" flat @click="editTotalDialog = false">Đóng</v-btn>
-          <v-btn color="blue darken-1" flat @click="editTotalDialog = false">Lưu</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-
-    <v-dialog v-model="confirmDialog" persistent max-width="290">
-      <v-card>
-        <v-card-title class="headline">
-          <h4>Bạn muốn xoá ví này ?</h4>
-          <br>
-          <span
-            class="caption"
-          >**Lưu ý khi bạn xoá tài khoản tất cả các giao dịch của tài khoản này sẽ bị xoá theo</span>
-        </v-card-title>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="green darken-1" flat @click="confirmDialog = false">Không</v-btn>
-          <v-btn color="green darken-1" flat @click="onSelectDeleteAccount">Có</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-  </v-layout>
+      <v-dialog v-model="confirmDialog" persistent max-width="290">
+        <v-card>
+          <v-card-title class="headline">
+            <h4>Bạn muốn xoá ví này ?</h4>
+            <br>
+            <span
+              class="caption"
+            >**Lưu ý khi bạn xoá tài khoản tất cả các giao dịch của tài khoản này sẽ bị xoá theo</span>
+          </v-card-title>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="green darken-1" flat @click="confirmDialog = false">Không</v-btn>
+            <v-btn color="green darken-1" flat @click="onSelectDeleteAccount">Có</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+    </v-layout>
+  </div>
 </template>
 
 <script>
@@ -209,12 +249,17 @@ export default {
       editTotalDialog: false,
       transferDialog: false,
       accountLoading: false,
-      confirmDialog: false,
       editDialog: false,
+      accountListDialog: false,
+      confirmDialog: false,
       deleteItem: null,
       editAccountItem: null,
       account: [],
       transferAccountItem: null,
+      selectedAccountIndex: 0,
+      totalExpense: 0,
+      totalIncome: 0,
+      monthFilter: moment().format('M'),
       items: [
         {
           title: 'Chuyển khoản',
@@ -228,14 +273,280 @@ export default {
         { title: 'Điều chỉnh số dư', icon: 'equalizer' }
       ],
       modelChuyenKhoan: false,
-      modelDieuChinhSoDu: false
+      modelDieuChinhSoDu: false,
+      dealList:null,
+      array1: [],
+      array2: [],
+      array3: [],
+      array4: [],
+      array5: [],
+      array6: [],
+      array7: [],
+      array8: [],
+      array9: [],
+      array10: [],
+      array11: [],
+      array12: [],
+      array13: [],
+      array14: [],
+      array15: [],
+      array16: [],
+      array17: [],
+      array18: [],
+      array19: [],
+      array20: [],
+      array21: [],
+      array22: [],
+      array23: [],
+      array24: [],
+      array25: [],
+      array26: [],
+      array27: [],
+      array28: [],
+      array29: [],
+      array30: [],
+      array31: []
     }
   },
   async mounted() {
-    this.readAccountData()
+    await this.readAccountData()
+    // await this.readDealData()
   },
 
   methods: {
+    async readDealData() {
+      let array1 = [],
+        array2 = [],
+        array3 = [],
+        array4 = [],
+        array5 = [],
+        array6 = [],
+        array7 = [],
+        array8 = [],
+        array9 = [],
+        array10 = [],
+        array11 = [],
+        array12 = [],
+        array13 = [],
+        array14 = [],
+        array15 = [],
+        array16 = [],
+        array17 = [],
+        array18 = [],
+        array19 = [],
+        array20 = [],
+        array21 = [],
+        array22 = [],
+        array23 = [],
+        array24 = [],
+        array25 = [],
+        array26 = [],
+        array27 = [],
+        array28 = [],
+        array29 = [],
+        array30 = [],
+        array31 = []
+      const uid = await firebase.auth().currentUser.uid
+      firebase
+        .database()
+        .ref(`${uid}/Deals/${this.account[this.selectedAccountIndex].key}`)
+        .on('value', async snapshot => {
+          // console.log(snapshot)
+          this.totalExpense = 0
+          this.totalIncome = 0
+          let keys = (snapshot.val() && Object.keys(snapshot.val())) || []
+          let totalIncome = 0
+          let totalExpense = 0
+          keys.map(async (item, index) => {
+            if (
+              moment(snapshot.val()[item].date).format('M') === this.monthFilter
+            ) 
+            {
+              for(let i=0;i<32;i++) {
+                // console.log(snapshot.val()[item][this.monthFilter][i.toString()])
+              }
+            }
+            // {
+            //   if (moment(snapshot.val()[item].date).format('D') === '1') {
+            //     array1.push(snapshot.val()[item])
+            //   }
+            //   if (moment(snapshot.val()[item].date).format('D') === '2') {
+            //     array2.push(snapshot.val()[item])
+            //   }
+            //   if (moment(snapshot.val()[item].date).format('D') === '3') {
+            //     array3.push(snapshot.val()[item])
+            //   }
+            //   if (moment(snapshot.val()[item].date).format('D') === '4') {
+            //     array4.push(snapshot.val()[item])
+            //   }
+            //   if (moment(snapshot.val()[item].date).format('D') === '5') {
+            //     array5.push(snapshot.val()[item])
+            //   }
+            //   if (moment(snapshot.val()[item].date).format('D') === '6') {
+            //     array6.push(snapshot.val()[item])
+            //   }
+            //   if (moment(snapshot.val()[item].date).format('D') === '7') {
+            //     array7.push(snapshot.val()[item])
+            //   }
+            //   if (moment(snapshot.val()[item].date).format('D') === '8') {
+            //     array8.push(snapshot.val()[item])
+            //   }
+            //   if (moment(snapshot.val()[item].date).format('D') === '9') {
+            //     array9.push(snapshot.val()[item])
+            //   }
+            //   if (moment(snapshot.val()[item].date).format('D') === '10') {
+            //     array10.push(snapshot.val()[item])
+            //   }
+            //   if (moment(snapshot.val()[item].date).format('D') === '11') {
+            //     array11.push(snapshot.val()[item])
+            //   }
+            //   if (moment(snapshot.val()[item].date).format('D') === '12') {
+            //     array12.push(snapshot.val()[item])
+            //   }
+            //   if (moment(snapshot.val()[item].date).format('D') === '13') {
+            //     array13.push(snapshot.val()[item])
+            //   }
+            //   if (moment(snapshot.val()[item].date).format('D') === '14') {
+            //     array14.push(snapshot.val()[item])
+            //   }
+            //   if (moment(snapshot.val()[item].date).format('D') === '15') {
+            //     array15.push(snapshot.val()[item])
+            //   }
+            //   if (moment(snapshot.val()[item].date).format('D') === '16') {
+            //     array16.push(snapshot.val()[item])
+            //   }
+            //   if (moment(snapshot.val()[item].date).format('D') === '17') {
+            //     array17.push(snapshot.val()[item])
+            //   }
+            //   if (moment(snapshot.val()[item].date).format('D') === '18') {
+            //     array18.push(snapshot.val()[item])
+            //   }
+            //   if (moment(snapshot.val()[item].date).format('D') === '19') {
+            //     array19.push(snapshot.val()[item])
+            //     console.log('item ',item)
+            //     console.log('array19 ',snapshot.val()[item][this.monthFilter]['17'])
+            //   }
+            //   if (moment(snapshot.val()[item].date).format('D') === '20') {
+            //     array20.push(snapshot.val()[item])
+            //   }
+            //   if (moment(snapshot.val()[item].date).format('D') === '21') {
+            //     array21.push(snapshot.val()[item])
+            //   }
+            //   if (moment(snapshot.val()[item].date).format('D') === '22') {
+            //     array22.push(snapshot.val()[item])
+            //   }
+            //   if (moment(snapshot.val()[item].date).format('D') === '23') {
+            //     array23.push(snapshot.val()[item])
+            //   }
+            //   if (moment(snapshot.val()[item].date).format('D') === '24') {
+            //     array24.push(snapshot.val()[item])
+            //   }
+            //   if (moment(snapshot.val()[item].date).format('D') === '25') {
+            //     array25.push(snapshot.val()[item])
+            //   }
+            //   if (moment(snapshot.val()[item].date).format('D') === '26') {
+            //     array26.push(snapshot.val()[item])
+            //   }
+            //   if (moment(snapshot.val()[item].date).format('D') === '27') {
+            //     array27.push(snapshot.val()[item])
+            //   }
+            //   if (moment(snapshot.val()[item].date).format('D') === '28') {
+            //     array28.push(snapshot.val()[item])
+            //   }
+            //   if (moment(snapshot.val()[item].date).format('D') === '29') {
+            //     array29.push(snapshot.val()[item])
+            //   }
+            //   if (moment(snapshot.val()[item].date).format('D') === '30') {
+            //     array30.push(snapshot.val()[item])
+            //   }
+            //   if (moment(snapshot.val()[item].date).format('D') === '31') {
+            //     array31.push(snapshot.val()[item])
+            //   }
+            //   if (
+            //     snapshot.val()[item].type === 'expense' ||
+            //     snapshot.val()[item].type === 'borrow'
+            //   ) {
+            //     totalExpense = totalExpense + snapshot.val()[item].amount
+
+            //     this.totalExpense = totalExpense
+            //   }
+            //   if (
+            //     snapshot.val()[item].type === 'income' ||
+            //     snapshot.val()[item].type === 'lend'
+            //   ) {
+            //     totalIncome = totalIncome + snapshot.val()[item].amount
+            //     this.totalIncome = totalIncome
+            //   }
+            // }
+          })
+          this.array1 = array1
+          this.array11 = array11
+          this.array12 = array12
+          this.array13 = array13
+          this.array14 = array14
+          this.array15 = array15
+          this.array2 = array2
+          this.array16 = array16
+          this.array17 = array17
+          this.array18 = array18
+          this.array19 = array19
+          this.array20 = array20
+          this.array3 = array3
+          this.array21 = array21
+          this.array22 = array22
+          this.array23 = array23
+          this.array24 = array24
+          this.array25 = array25
+          this.array4 = array4
+          this.array26 = array26
+          this.array27 = array27
+          this.array28 = array28
+          this.array29 = array29
+          this.array30 = array30
+          this.array5 = array5
+          this.array31 = array31
+          this.array6 = array6
+          this.array7 = array7
+          this.array8 = array8
+          this.array9 = array9
+          this.array10 = array10
+          // refreshing: false,
+          // loading: false
+          array1 = []
+          array2 = []
+          array3 = []
+          array4 = []
+          array5 = []
+          array6 = []
+          array7 = []
+          array8 = []
+          array9 = []
+          array10 = []
+          array11 = []
+          array12 = []
+          array13 = []
+          array14 = []
+          array15 = []
+          array16 = []
+          array17 = []
+          array18 = []
+          array19 = []
+          array20 = []
+          array21 = []
+          array22 = []
+          array23 = []
+          array24 = []
+          array25 = []
+          array26 = []
+          array27 = []
+          array28 = []
+          array29 = []
+          array30 = []
+          array31 = []
+          totalIncome = 0
+          totalExpense = 0
+        })
+    },
     ...mapMutations({
       setSnack: 'snackbar/setSnack'
     }),
@@ -273,7 +584,7 @@ export default {
       }
       if (info.title === 'Sửa') {
         this.editDialog = true
-        this.editAccountItem = item 
+        this.editAccountItem = item
       }
     },
     async readAccountData() {
@@ -356,6 +667,14 @@ export default {
   watch: {
     editTotalDialog() {
       if (this.editTotalDialog == false) this.$refs.editTotalForm.reset()
+    },
+    async account() {
+      await this.readDealData()
+    },
+    array19() {
+      this.array19.forEach((element, index) => {
+        // console.log('Element ', element.categories)
+      })
     }
   }
 }
