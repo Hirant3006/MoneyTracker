@@ -6,7 +6,7 @@
           <v-layout v-if="account.length!==0" justify-space-between row wrap>
             <v-flex xs12 sm12 md12 lg12 xl12>
               <v-card>
-                <v-card-title primary-title>
+                <v-card-title primary-title style="padding-bottom:0px">
                   <v-layout pl-1 pr-1 justify-center>
                     <div class="selectedAccount">
                       <v-layout
@@ -53,12 +53,36 @@
                     </v-menu>
                   </v-layout>
                 </v-card-title>
+                <!-- <v-tabs show-arrows fixed-tabs v-model="activeSelectmonthTab">
+                  <v-tab v-for="n in listMonth" :key="n">{{ n }}</v-tab>
+                </v-tabs>-->
+                <v-layout justify-space-around mt-1>
+                  <v-btn @click="onClickPrevMonth" small depressed>
+                    <v-icon dark>arrow_back</v-icon>
+                    &nbsp;
+                    {{listMonth[0]}}
+                  </v-btn>
+                  <span class="title" style="align-self:center">{{monthFilter}}</span>
+                  <v-btn @click="onClickNextMonth" small depressed>
+                    {{listMonth[2]}} &nbsp;
+                    <v-icon dark>arrow_forward</v-icon>
+                  </v-btn>
+                </v-layout>
               </v-card>
             </v-flex>
           </v-layout>
-          <v-layout v-if="account.length!==0" justify-space-between row wrap>
+          <v-layout
+            v-for="(listItemByMonth,index) in filterDealbyDate(monthFilter,dealList)"
+            :key="index"
+            justify-space-between
+            row
+            wrap
+          >
             <v-flex xs12 sm12 md12 lg12 xl12>
-              <v-card>asdsad</v-card>
+              <v-card v-for="(item,index) in listItemByMonth" :key="index">
+                <v-card-title>{{formatDate(item.date)}}</v-card-title>
+                {{item.date}}
+              </v-card>
             </v-flex>
           </v-layout>
         </v-container>
@@ -259,8 +283,12 @@ export default {
       selectedAccountIndex: 0,
       totalExpense: 0,
       totalIncome: 0,
-      monthFilter: moment().format('YYYY-MM-DD'),
+      monthFilter: moment().format('YYYY-MM'),
+      activeSelectmonthTab: 1,
       dealList: [],
+      listMonth: [],
+      preMonth: null,
+      nextMonth: null,
       items: [
         {
           title: 'Chuyển khoản',
@@ -279,13 +307,46 @@ export default {
   },
   async mounted() {
     await this.readAccountData()
+    var startdate = moment()
+    // startdate = startdate.subtract(1, 'days')
+    // startdate = startdate.format('DD-YYYY-MM')
+    this.listMonth[0] = moment()
+      .subtract(1, 'months')
+      .format('YYYY-MM')
+    this.listMonth[1] = moment().format('YYYY-MM')
+    this.listMonth[2] = moment()
+      .add(1, 'months')
+      .format('YYYY-MM')
     // await this.readDealData()
-    
   },
 
   methods: {
-    filterDealbyDate(){
-
+    formatDate(date,type) {
+      switch (date) {
+        case x:
+          // code block
+          break
+        case y:
+          // code block
+          break
+        default:
+        // code block
+      }
+    },
+    filterDealbyDate(date, dealList) {
+      let listDealByDay = []
+      const dealbyDate = dealList.filter(
+        item => moment(item.date).format('YYYY-MM') == this.monthFilter
+      )
+      for (let i = 0; i < 31; i++) {
+        let array = dealbyDate.filter(
+          element => parseInt(moment(element.date).format('DD')) == i
+        )
+        if (array.length !== 0) {
+          listDealByDay.push(array)
+        }
+      }
+      return listDealByDay
     },
     async readDealData() {
       const uid = await firebase.auth().currentUser.uid
@@ -293,6 +354,7 @@ export default {
         .database()
         .ref(`${uid}/Deals/${this.account[this.selectedAccountIndex].key}`)
         .on('value', async snapshot => {
+          console.log('Hello')
           let keys = (snapshot.val() && Object.keys(snapshot.val())) || []
           if (keys) {
             this.dealList = []
@@ -418,6 +480,30 @@ export default {
             })
         }
       }
+    },
+    onClickPrevMonth() {
+      this.monthFilter = moment(this.monthFilter)
+        .subtract(1, 'months')
+        .format('YYYY-MM')
+      this.listMonth[0] = moment(this.monthFilter)
+        .subtract(1, 'months')
+        .format('YYYY-MM')
+      this.listMonth[1] = this.monthFilter
+      this.listMonth[2] = moment(this.monthFilter)
+        .add(1, 'months')
+        .format('YYYY-MM')
+    },
+    onClickNextMonth() {
+      this.monthFilter = moment(this.monthFilter)
+        .add(1, 'months')
+        .format('YYYY-MM')
+      this.listMonth[0] = moment(this.monthFilter)
+        .subtract(1, 'months')
+        .format('YYYY-MM')
+      this.listMonth[1] = this.monthFilter
+      this.listMonth[2] = moment(this.monthFilter)
+        .add(1, 'months')
+        .format('YYYY-MM')
     }
   },
   watch: {
@@ -427,10 +513,48 @@ export default {
     async account() {
       await this.readDealData()
     },
-    array19() {
-      this.array19.forEach((element, index) => {
-        // console.log('Element ', element.categories)
-      })
+    activeSelectmonthTab() {
+      console.log(this.activeSelectmonthTab)
+      // if (this.activeSelectmonthTab===0)
+      // this.activeSelectmonthTab=1;
+      if (this.activeSelectmonthTab === 2) this.activeSelectmonthTab = 1
+      if (this.activeSelectmonthTab === 0) {
+        this.monthFilter = moment(this.monthFilter)
+          .subtract(1, 'months')
+          .format('YYYY-MM')
+        this.listMonth[0] = moment(this.monthFilter)
+          .subtract(1, 'months')
+          .format('YYYY-MM')
+        this.listMonth[1] = this.monthFilter
+        this.listMonth[2] = moment(this.monthFilter)
+          .add(1, 'months')
+          .format('YYYY-MM')
+        // this.activeSelectmonthTab = 1
+      }
+      // if (this.activeSelectmonthTab === 2) {
+      //   console.log(
+      //     moment(this.monthFilter)
+      //       .subtract(1, 'months')
+      //       .format('YYYY-MM')
+      //   )
+      this.monthFilter = moment(this.monthFilter)
+        .add(1, 'months')
+        .format('YYYY-MM')
+      this.listMonth[0] = moment(this.monthFilter)
+        .subtract(1, 'months')
+        .format('YYYY-MM')
+      this.listMonth[1] = this.monthFilter
+      this.listMonth[2] = moment(this.monthFilter)
+        .add(1, 'months')
+        .format('YYYY-MM')
+      //   this.activeSelectmonthTab = 1
+      // }
+    },
+    monthFilter() {
+      console.log(
+        'Filter deal ',
+        this.filterDealbyDate(this.monthFilter, this.dealList)
+      )
     }
   }
 }
