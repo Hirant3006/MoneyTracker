@@ -259,7 +259,8 @@ export default {
       selectedAccountIndex: 0,
       totalExpense: 0,
       totalIncome: 0,
-      monthFilter: moment().format('M'),
+      monthFilter: moment().format('YYYY-MM-DD'),
+      dealList: [],
       items: [
         {
           title: 'Chuyển khoản',
@@ -273,278 +274,33 @@ export default {
         { title: 'Điều chỉnh số dư', icon: 'equalizer' }
       ],
       modelChuyenKhoan: false,
-      modelDieuChinhSoDu: false,
-      dealList:null,
-      array1: [],
-      array2: [],
-      array3: [],
-      array4: [],
-      array5: [],
-      array6: [],
-      array7: [],
-      array8: [],
-      array9: [],
-      array10: [],
-      array11: [],
-      array12: [],
-      array13: [],
-      array14: [],
-      array15: [],
-      array16: [],
-      array17: [],
-      array18: [],
-      array19: [],
-      array20: [],
-      array21: [],
-      array22: [],
-      array23: [],
-      array24: [],
-      array25: [],
-      array26: [],
-      array27: [],
-      array28: [],
-      array29: [],
-      array30: [],
-      array31: []
+      modelDieuChinhSoDu: false
     }
   },
   async mounted() {
     await this.readAccountData()
     // await this.readDealData()
+    
   },
 
   methods: {
+    filterDealbyDate(){
+
+    },
     async readDealData() {
-      let array1 = [],
-        array2 = [],
-        array3 = [],
-        array4 = [],
-        array5 = [],
-        array6 = [],
-        array7 = [],
-        array8 = [],
-        array9 = [],
-        array10 = [],
-        array11 = [],
-        array12 = [],
-        array13 = [],
-        array14 = [],
-        array15 = [],
-        array16 = [],
-        array17 = [],
-        array18 = [],
-        array19 = [],
-        array20 = [],
-        array21 = [],
-        array22 = [],
-        array23 = [],
-        array24 = [],
-        array25 = [],
-        array26 = [],
-        array27 = [],
-        array28 = [],
-        array29 = [],
-        array30 = [],
-        array31 = []
       const uid = await firebase.auth().currentUser.uid
       firebase
         .database()
         .ref(`${uid}/Deals/${this.account[this.selectedAccountIndex].key}`)
         .on('value', async snapshot => {
-          // console.log(snapshot)
-          this.totalExpense = 0
-          this.totalIncome = 0
           let keys = (snapshot.val() && Object.keys(snapshot.val())) || []
-          let totalIncome = 0
-          let totalExpense = 0
-          keys.map(async (item, index) => {
-            if (
-              moment(snapshot.val()[item].date).format('M') === this.monthFilter
-            ) 
-            {
-              for(let i=0;i<32;i++) {
-                // console.log(snapshot.val()[item][this.monthFilter][i.toString()])
-              }
-            }
-            // {
-            //   if (moment(snapshot.val()[item].date).format('D') === '1') {
-            //     array1.push(snapshot.val()[item])
-            //   }
-            //   if (moment(snapshot.val()[item].date).format('D') === '2') {
-            //     array2.push(snapshot.val()[item])
-            //   }
-            //   if (moment(snapshot.val()[item].date).format('D') === '3') {
-            //     array3.push(snapshot.val()[item])
-            //   }
-            //   if (moment(snapshot.val()[item].date).format('D') === '4') {
-            //     array4.push(snapshot.val()[item])
-            //   }
-            //   if (moment(snapshot.val()[item].date).format('D') === '5') {
-            //     array5.push(snapshot.val()[item])
-            //   }
-            //   if (moment(snapshot.val()[item].date).format('D') === '6') {
-            //     array6.push(snapshot.val()[item])
-            //   }
-            //   if (moment(snapshot.val()[item].date).format('D') === '7') {
-            //     array7.push(snapshot.val()[item])
-            //   }
-            //   if (moment(snapshot.val()[item].date).format('D') === '8') {
-            //     array8.push(snapshot.val()[item])
-            //   }
-            //   if (moment(snapshot.val()[item].date).format('D') === '9') {
-            //     array9.push(snapshot.val()[item])
-            //   }
-            //   if (moment(snapshot.val()[item].date).format('D') === '10') {
-            //     array10.push(snapshot.val()[item])
-            //   }
-            //   if (moment(snapshot.val()[item].date).format('D') === '11') {
-            //     array11.push(snapshot.val()[item])
-            //   }
-            //   if (moment(snapshot.val()[item].date).format('D') === '12') {
-            //     array12.push(snapshot.val()[item])
-            //   }
-            //   if (moment(snapshot.val()[item].date).format('D') === '13') {
-            //     array13.push(snapshot.val()[item])
-            //   }
-            //   if (moment(snapshot.val()[item].date).format('D') === '14') {
-            //     array14.push(snapshot.val()[item])
-            //   }
-            //   if (moment(snapshot.val()[item].date).format('D') === '15') {
-            //     array15.push(snapshot.val()[item])
-            //   }
-            //   if (moment(snapshot.val()[item].date).format('D') === '16') {
-            //     array16.push(snapshot.val()[item])
-            //   }
-            //   if (moment(snapshot.val()[item].date).format('D') === '17') {
-            //     array17.push(snapshot.val()[item])
-            //   }
-            //   if (moment(snapshot.val()[item].date).format('D') === '18') {
-            //     array18.push(snapshot.val()[item])
-            //   }
-            //   if (moment(snapshot.val()[item].date).format('D') === '19') {
-            //     array19.push(snapshot.val()[item])
-            //     console.log('item ',item)
-            //     console.log('array19 ',snapshot.val()[item][this.monthFilter]['17'])
-            //   }
-            //   if (moment(snapshot.val()[item].date).format('D') === '20') {
-            //     array20.push(snapshot.val()[item])
-            //   }
-            //   if (moment(snapshot.val()[item].date).format('D') === '21') {
-            //     array21.push(snapshot.val()[item])
-            //   }
-            //   if (moment(snapshot.val()[item].date).format('D') === '22') {
-            //     array22.push(snapshot.val()[item])
-            //   }
-            //   if (moment(snapshot.val()[item].date).format('D') === '23') {
-            //     array23.push(snapshot.val()[item])
-            //   }
-            //   if (moment(snapshot.val()[item].date).format('D') === '24') {
-            //     array24.push(snapshot.val()[item])
-            //   }
-            //   if (moment(snapshot.val()[item].date).format('D') === '25') {
-            //     array25.push(snapshot.val()[item])
-            //   }
-            //   if (moment(snapshot.val()[item].date).format('D') === '26') {
-            //     array26.push(snapshot.val()[item])
-            //   }
-            //   if (moment(snapshot.val()[item].date).format('D') === '27') {
-            //     array27.push(snapshot.val()[item])
-            //   }
-            //   if (moment(snapshot.val()[item].date).format('D') === '28') {
-            //     array28.push(snapshot.val()[item])
-            //   }
-            //   if (moment(snapshot.val()[item].date).format('D') === '29') {
-            //     array29.push(snapshot.val()[item])
-            //   }
-            //   if (moment(snapshot.val()[item].date).format('D') === '30') {
-            //     array30.push(snapshot.val()[item])
-            //   }
-            //   if (moment(snapshot.val()[item].date).format('D') === '31') {
-            //     array31.push(snapshot.val()[item])
-            //   }
-            //   if (
-            //     snapshot.val()[item].type === 'expense' ||
-            //     snapshot.val()[item].type === 'borrow'
-            //   ) {
-            //     totalExpense = totalExpense + snapshot.val()[item].amount
+          if (keys) {
+            this.dealList = []
 
-            //     this.totalExpense = totalExpense
-            //   }
-            //   if (
-            //     snapshot.val()[item].type === 'income' ||
-            //     snapshot.val()[item].type === 'lend'
-            //   ) {
-            //     totalIncome = totalIncome + snapshot.val()[item].amount
-            //     this.totalIncome = totalIncome
-            //   }
-            // }
-          })
-          this.array1 = array1
-          this.array11 = array11
-          this.array12 = array12
-          this.array13 = array13
-          this.array14 = array14
-          this.array15 = array15
-          this.array2 = array2
-          this.array16 = array16
-          this.array17 = array17
-          this.array18 = array18
-          this.array19 = array19
-          this.array20 = array20
-          this.array3 = array3
-          this.array21 = array21
-          this.array22 = array22
-          this.array23 = array23
-          this.array24 = array24
-          this.array25 = array25
-          this.array4 = array4
-          this.array26 = array26
-          this.array27 = array27
-          this.array28 = array28
-          this.array29 = array29
-          this.array30 = array30
-          this.array5 = array5
-          this.array31 = array31
-          this.array6 = array6
-          this.array7 = array7
-          this.array8 = array8
-          this.array9 = array9
-          this.array10 = array10
-          // refreshing: false,
-          // loading: false
-          array1 = []
-          array2 = []
-          array3 = []
-          array4 = []
-          array5 = []
-          array6 = []
-          array7 = []
-          array8 = []
-          array9 = []
-          array10 = []
-          array11 = []
-          array12 = []
-          array13 = []
-          array14 = []
-          array15 = []
-          array16 = []
-          array17 = []
-          array18 = []
-          array19 = []
-          array20 = []
-          array21 = []
-          array22 = []
-          array23 = []
-          array24 = []
-          array25 = []
-          array26 = []
-          array27 = []
-          array28 = []
-          array29 = []
-          array30 = []
-          array31 = []
-          totalIncome = 0
-          totalExpense = 0
+            keys.map((item, index) => {
+              this.dealList.push(snapshot.val()[item])
+            })
+          }
         })
     },
     ...mapMutations({
