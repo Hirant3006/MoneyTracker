@@ -3,15 +3,16 @@
     <v-layout justify-center align-center column>
       <v-flex xs12 sm8>
         <v-container grid-list-lg>
-          <v-layout v-if="account.length!==0" justify-space-between row wrap>
+          <v-layout  v-if="account.length!==0" mb-3 justify-space-between row wrap>
             <v-flex xs12 sm12 md12 lg12 xl12>
-              <v-card>
+              <v-card style="width:400px">
                 <v-card-title primary-title style="padding-bottom:0px">
                   <v-layout pl-1 pr-1 justify-center>
                     <div class="selectedAccount">
                       <v-layout
                         style="border:1px solid #E0E0E0;border-radius:5px;cursor:pointer"
                         @click="accountListDialog=true"
+                        
                         pa-3
                         mr-4
                         class
@@ -24,11 +25,11 @@
                         <v-avatar :size="70" color=" lighten-4">
                           <img :src="accountIcon(account[selectedAccountIndex])" alt="avatar">
                         </v-avatar>
-                        <div class="ml-2 mr-5" style="display:flex;flex-direction:column">
+                        <div class="ml-3 mr-3" style="display:flex;flex-direction:column;width:100px">
                           <span class="headline">{{account[selectedAccountIndex].name}}</span>
                           <span
                             class="subheading"
-                            style="color:#80CBC4"
+                            :style="account[selectedAccountIndex].balance>=0 ? 'color:#80CBC4' : 'color:red'"
                           >{{formatPrice(account[selectedAccountIndex].balance)}} đ</span>
                         </div>
                         <v-icon>expand_more</v-icon>
@@ -71,47 +72,76 @@
               </v-card>
             </v-flex>
           </v-layout>
-          <v-layout
-            v-for="(listItemByMonth,index) in filterDealbyDate(monthFilter,dealList)"
-            :key="index"
-            justify-space-between
-            row
-            wrap
-          >
-            <v-flex xs12 sm12 md12 lg12 xl12>
-              <v-card>
-                <v-card-title style="justify-content:space-between;padding-bottom:2px">
-                  <div style="display:flex">
-                    <span class="display-1 mr-1">{{formatDate(listItemByMonth[0].date,'D')}}</span>
-                    <div style="align-self:center;display:flex;flex-direction:column">
-                      <span
-                        class="caption font-weight-regular"
-                      >{{formatDate(listItemByMonth[0].date,'W')}}</span>
-                      <span
-                        class="caption font-weight-thin"
-                      >{{formatDate(listItemByMonth[0].date,'MY')}}</span>
+          <template v-if="filterDealbyDate(monthFilter,dealList).length!==0 ">
+            <v-layout
+              v-for="(listItemByMonth,index) in filterDealbyDate(monthFilter,dealList)"
+              :key="index"
+              justify-space-between
+              row
+              wrap
+            >
+              <v-flex xs12 sm12 md12 lg12 xl12 style="padding-bottom:0px">
+                <v-card>
+                  <v-card-title style="justify-content:space-between;padding-bottom:2px">
+                    <div style="display:flex">
+                      <span class="display-1 mr-1">{{formatDate(listItemByMonth[0].date,'D')}}</span>
+                      <div style="align-self:center;display:flex;flex-direction:column">
+                        <span
+                          class="caption font-weight-regular"
+                        >{{formatDate(listItemByMonth[0].date,'W')}}</span>
+                        <span
+                          class="caption font-weight-thin"
+                        >{{formatDate(listItemByMonth[0].date,'MY')}}</span>
+                      </div>
                     </div>
-                  </div>
-                  <span
-                    class="sub-heading font-weight-bold"
-                  >{{countAmount(listItemByMonth)}}</span>
-                </v-card-title>
-                <v-divider></v-divider>
-                <v-card-text v-for="(item,index) in listItemByMonth" :key="index" style="display:flex;justify-content:space-between">
-                  <div style="display:flex">
-                    <v-avatar><img :src="getIconCategories(item.categories)" alt=""></v-avatar>
-                    <div class="ml-2" style="display:flex;flex-direction:column;align-self:center;">
-                      <span class="font-weight-bold">{{item.categories}}</span>
-                      <span>{{item.note}}</span>
+                    <span class="sub-heading font-weight-bold">{{countAmount(listItemByMonth)}}</span>
+                  </v-card-title>
+                  <v-divider></v-divider>
+                  <v-card-text
+                    v-for="(item,index) in listItemByMonth"
+                    :key="index"
+                    style="display:flex;justify-content:space-between"
+                  >
+                    <div style="display:flex">
+                      <v-avatar>
+                        <img :src="getIconCategories(item.categories)" alt>
+                      </v-avatar>
+                      <div
+                        class="ml-2"
+                        style="display:flex;flex-direction:column;align-self:center;"
+                      >
+                        <span class="font-weight-bold">{{item.categories}}</span>
+                        <span>{{item.note}}</span>
+                      </div>
                     </div>
-                  </div>
-                  <span class='font-weight-bold' v-if="item.type==='expense'" style="color:red;align-self:center">- {{item.amount}}</span>
-                  <span class="font-weight-bold" v-else style="color:green;align-self:center">+ {{item.amount}}</span>
-
-                </v-card-text>
-              </v-card>
-            </v-flex>
-          </v-layout>
+                    <span
+                      class="font-weight-bold"
+                      v-if="item.type==='expense'"
+                      style="color:red;align-self:center"
+                    >- {{item.amount}}</span>
+                    <span
+                      class="font-weight-bold"
+                      v-else
+                      style="color:green;align-self:center"
+                    >+ {{item.amount}}</span>
+                  </v-card-text>
+                </v-card>
+              </v-flex>
+            </v-layout>
+          </template>
+          <template v-else-if="dealList.length!==0  ">
+            <v-layout
+              justify-space-between
+              row
+              wrap
+            >
+              <v-flex xs12 sm12 md12 lg12 xl12 >
+                <v-card >
+                  <v-card-title  style="justify-content:center">Không có giao dịch trong tháng này</v-card-title>
+                </v-card>
+              </v-flex>
+            </v-layout>
+          </template>
         </v-container>
       </v-flex>
 
@@ -137,7 +167,7 @@
                 class="font-weight-medium"
                 v-for="(item,index) in account"
                 :key="index"
-                @click="selectedAccountIndex=index"
+                @click="selectedAccountIndex=index;accountListDialog=false"
               >
                 <v-divider class="mb-2"/>
                 <v-layout justify-space-between mt-2 mb-2 align-center>
@@ -348,97 +378,97 @@ export default {
   },
 
   methods: {
-    getIconCategories (categorieName)  {
-        switch (categorieName) {
-            case "Ăn tiệm":
-                return require('@/assets/Image/breakfast.png')
-            case "Cafe":
-                return require('@/assets/Image/coffee-cup.png')
-            case "Ăn nhậu":
-                return require('@/assets/Image/beer.png')
-            case "Đồ chơi":
-                return require('@/assets/Image/toys.png')
-            case "Học phí":
-                return require('@/assets/Image/money.png')
-            case "Sách vở":
-                return require('@/assets/Image/open-book.png')
-            case "Sữa":
-                return require('@/assets/Image/milk.png')
-            case "Tiền tiêu vặt":
-                return require('@/assets/Image/money.png')
-            case "Điện":
-                return require('@/assets/Image/idea.png')
-            case "Điện thoại cố định":
-                return require('@/assets/Image/cellular.png')
-            case "Điện thoại di dộng":
-                return require('@/assets/Image/smartphone.png')
-            case "Gas":
-                return require('@/assets/Image/fire.png')
-            case "Internet":
-                return require('@/assets/Image/wifi.png')
-            case "Nước":
-                return require('@/assets/Image/drop.png')
-            case "Truyền hình":
-                return require('@/assets/Image/television.png')
-            case "Bảo hiểm xe":
-                return require('@/assets/Image/car-insurance.png')
-            case "Gửi xe":
-                return require('@/assets/Image/parking.png')
-            case "Rửa xe":
-                return require('@/assets/Image/car-wash.png')
-            case "Sửa chữa":
-                return require('@/assets/Image/car-lift.png')
-            case "Taxi/ thuê xe":
-                return require('@/assets/Image/taxi.png')
-            case "Xăng xe":
-                return require('@/assets/Image/gas.png')
-            case "Biếu tặng":
-                return require('@/assets/Image/gift.png')
-            case "Sinh nhật":
-                return require('@/assets/Image/birthday-cake.png')
-            case "Cưới xin":
-                return require('@/assets/Image/rings.png')
-            case "Làm đẹp":
-                return require('@/assets/Image/lipstick.png')
-            case "Mỹ phẩm":
-                return require('@/assets/Image/lipstick.png')
-            case "Phim ảnh, ca nhạc":
-                return require('@/assets/Image/popcorn.png')
-            case "Khám, chữa bệnh":
-                return require('@/assets/Image/stethoscope.png')
-            case "Thuốc men":
-                return require('@/assets/Image/medicine.png')
-            case "Giày, dép":
-                return require('@/assets/Image/shoe.png')
-            case "Quần, áo":
-                return require('@/assets/Image/tshirt.png')
-            case "Phụ kiện khác":
-                return require('@/assets/Image/tie.png')
-            case "Tiền thưởng":
-                return require('@/assets/Image/bonus.png')
-            case "Lương":
-                return require('@/assets/Image/salary.png')
-            case "Được tặng":
-                return require('@/assets/Image/gift.png')
-            case "Bán đồ":
-                return require('@/assets/Image/sale.png')
-            case "Khoản thu khác":
-                return require('@/assets/Image/money.png')
-            case "Khoản chi khác":
-                return require('@/assets/Image/money.png')
-            case "Đi vay":
-                return require('@/assets/Image/offer.png')
-            case "Thu nợ":
-                return require('@/assets/Image/repay.png')
-            case "Trả nợ":
-                return require('@/assets/Image/payment-method.png')
-            case "Cho vay":
-                return require('@/assets/Image/save-money.png')
-            case "Chuyển khoản":
-                return require('@/assets/Image/transfer.png')
-            default:
-                return require('@/assets/Image/question-mark.png')
-        }
+    getIconCategories(categorieName) {
+      switch (categorieName) {
+        case 'Ăn tiệm':
+          return require('@/assets/Image/breakfast.png')
+        case 'Cafe':
+          return require('@/assets/Image/coffee-cup.png')
+        case 'Ăn nhậu':
+          return require('@/assets/Image/beer.png')
+        case 'Đồ chơi':
+          return require('@/assets/Image/toys.png')
+        case 'Học phí':
+          return require('@/assets/Image/money.png')
+        case 'Sách vở':
+          return require('@/assets/Image/open-book.png')
+        case 'Sữa':
+          return require('@/assets/Image/milk.png')
+        case 'Tiền tiêu vặt':
+          return require('@/assets/Image/money.png')
+        case 'Điện':
+          return require('@/assets/Image/idea.png')
+        case 'Điện thoại cố định':
+          return require('@/assets/Image/cellular.png')
+        case 'Điện thoại di dộng':
+          return require('@/assets/Image/smartphone.png')
+        case 'Gas':
+          return require('@/assets/Image/fire.png')
+        case 'Internet':
+          return require('@/assets/Image/wifi.png')
+        case 'Nước':
+          return require('@/assets/Image/drop.png')
+        case 'Truyền hình':
+          return require('@/assets/Image/television.png')
+        case 'Bảo hiểm xe':
+          return require('@/assets/Image/car-insurance.png')
+        case 'Gửi xe':
+          return require('@/assets/Image/parking.png')
+        case 'Rửa xe':
+          return require('@/assets/Image/car-wash.png')
+        case 'Sửa chữa':
+          return require('@/assets/Image/car-lift.png')
+        case 'Taxi/ thuê xe':
+          return require('@/assets/Image/taxi.png')
+        case 'Xăng xe':
+          return require('@/assets/Image/gas.png')
+        case 'Biếu tặng':
+          return require('@/assets/Image/gift.png')
+        case 'Sinh nhật':
+          return require('@/assets/Image/birthday-cake.png')
+        case 'Cưới xin':
+          return require('@/assets/Image/rings.png')
+        case 'Làm đẹp':
+          return require('@/assets/Image/lipstick.png')
+        case 'Mỹ phẩm':
+          return require('@/assets/Image/lipstick.png')
+        case 'Phim ảnh, ca nhạc':
+          return require('@/assets/Image/popcorn.png')
+        case 'Khám, chữa bệnh':
+          return require('@/assets/Image/stethoscope.png')
+        case 'Thuốc men':
+          return require('@/assets/Image/medicine.png')
+        case 'Giày, dép':
+          return require('@/assets/Image/shoe.png')
+        case 'Quần, áo':
+          return require('@/assets/Image/tshirt.png')
+        case 'Phụ kiện khác':
+          return require('@/assets/Image/tie.png')
+        case 'Tiền thưởng':
+          return require('@/assets/Image/bonus.png')
+        case 'Lương':
+          return require('@/assets/Image/salary.png')
+        case 'Được tặng':
+          return require('@/assets/Image/gift.png')
+        case 'Bán đồ':
+          return require('@/assets/Image/sale.png')
+        case 'Khoản thu khác':
+          return require('@/assets/Image/money.png')
+        case 'Khoản chi khác':
+          return require('@/assets/Image/money.png')
+        case 'Đi vay':
+          return require('@/assets/Image/offer.png')
+        case 'Thu nợ':
+          return require('@/assets/Image/repay.png')
+        case 'Trả nợ':
+          return require('@/assets/Image/payment-method.png')
+        case 'Cho vay':
+          return require('@/assets/Image/save-money.png')
+        case 'Chuyển khoản':
+          return require('@/assets/Image/transfer.png')
+        default:
+          return require('@/assets/Image/question-mark.png')
+      }
     },
     countAmount(list) {
       let array = 0
@@ -495,7 +525,6 @@ export default {
           listDealByDay.push(array)
         }
       }
-      console.log(listDealByDay)
       return listDealByDay
     },
     async readDealData() {
@@ -504,7 +533,6 @@ export default {
         .database()
         .ref(`${uid}/Deals/${this.account[this.selectedAccountIndex].key}`)
         .on('value', async snapshot => {
-          console.log('Hello')
           let keys = (snapshot.val() && Object.keys(snapshot.val())) || []
           if (keys) {
             this.dealList = []
@@ -664,7 +692,6 @@ export default {
       await this.readDealData()
     },
     activeSelectmonthTab() {
-      console.log(this.activeSelectmonthTab)
       // if (this.activeSelectmonthTab===0)
       // this.activeSelectmonthTab=1;
       if (this.activeSelectmonthTab === 2) this.activeSelectmonthTab = 1
@@ -705,6 +732,9 @@ export default {
         'Filter deal ',
         this.filterDealbyDate(this.monthFilter, this.dealList)
       )
+    },
+    selectedAccountIndex() {
+      this.readDealData();
     }
   }
 }
