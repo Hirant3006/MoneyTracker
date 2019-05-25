@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="detailDealDialog" max-width="600px" lazy>
+  <v-dialog v-model="detailDealDialog" max-width="600px" persistent>
     <v-card>
       <v-card-title>
         <span class="headline pb-1">Chi tiết giao dịch</span>
@@ -192,7 +192,7 @@ export default {
   },
   methods: {
     async onSelectDeleteDeal() {
-        this.deleteLoading=true;
+      this.deleteLoading = true
       const accountBalance = this.accountList.filter(
         item => item.key == this.dealItem.accountKey
       )[0].balance
@@ -208,14 +208,13 @@ export default {
         msg: 'Đã xoá giao dịch thành công',
         color: 'success'
       })
-      this.deleteLoading=false;
+      this.deleteLoading = false
       this.$emit('close-dialog')
     },
     ...mapMutations({
       setSnack: 'snackbar/setSnack'
     }),
     async onPressAddDeals() {
-     this.editLoading=true;
       const accountItem = this.accountList.filter(
         item => item.key == this.dealItem.accountKey
       )[0]
@@ -228,7 +227,7 @@ export default {
           color: 'error'
         })
       } else if (this.selectCategory == null) {
-        this.setSnack({ msg: 'Vui lòng chọn hạng mục', color: 'error' })
+        this.setSnack({ msg: 'Không có thay đổi mới', color: 'error' })
       } else if (this.selectAccount == null) {
         this.setSnack({ msg: 'Vui lòng chọn ví', color: 'success' })
       } else if (
@@ -245,6 +244,7 @@ export default {
         const type = this.selectCategory.type
         const accountBalance = accountItem.balance
         const selectedAccount = this.dealItem.account
+        this.editLoading = true
         this.writeUserData(
           amount,
           categories,
@@ -276,7 +276,7 @@ export default {
         this.selectAccount = null
         this.selectCategory = null
         this.$emit('close-dialog')
-        this.editLoading=false
+        this.editLoading = false
         // this.clearData()
       }
     },
