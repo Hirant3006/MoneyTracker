@@ -1,18 +1,17 @@
 <template>
   <div>
-    <v-layout justify-center align-center column>
+    <v-layout v-if="account.length!==0" justify-center align-center column>
       <v-flex xs12 sm8>
         <v-container grid-list-lg>
-          <v-layout  v-if="account.length!==0" mb-3 justify-space-between row wrap>
+          <v-layout mb-1 justify-space-between row wrap>
             <v-flex xs12 sm12 md12 lg12 xl12>
               <v-card style="width:400px">
                 <v-card-title primary-title style="padding-bottom:0px">
                   <v-layout pl-1 pr-1 justify-center>
                     <div class="selectedAccount">
                       <v-layout
-                        style="border:1px solid #E0E0E0;border-radius:5px;cursor:pointer"
+                        style="border:1px solid #E0E0E0;border-radius:5px;cursor:pointer;width:300px"
                         @click="accountListDialog=true"
-                        
                         pa-3
                         mr-4
                         class
@@ -25,7 +24,10 @@
                         <v-avatar :size="70" color=" lighten-4">
                           <img :src="accountIcon(account[selectedAccountIndex])" alt="avatar">
                         </v-avatar>
-                        <div class="ml-3 mr-3" style="display:flex;flex-direction:column;width:100px">
+                        <div
+                          class="ml-3 mr-3"
+                          style="display:flex;flex-direction:column;width:100px"
+                        >
                           <span class="headline">{{account[selectedAccountIndex].name}}</span>
                           <span
                             class="subheading"
@@ -35,23 +37,6 @@
                         <v-icon>expand_more</v-icon>
                       </v-layout>
                     </div>
-                    <v-menu offset-y>
-                      <template v-slot:activator="{ on }">
-                        <v-btn flat icon v-on="on">
-                          <v-icon>more_vert</v-icon>
-                        </v-btn>
-                      </template>
-                      <v-list>
-                        <v-list-tile
-                          v-for="(info, index) in items"
-                          :key="index"
-                          @click="onToggleMore(info,item)"
-                        >
-                          <v-icon style="margin-right: 20px;" class>{{info.icon}}</v-icon>
-                          <v-list-tile-title>{{ info.title }}</v-list-tile-title>
-                        </v-list-tile>
-                      </v-list>
-                    </v-menu>
                   </v-layout>
                 </v-card-title>
                 <!-- <v-tabs show-arrows fixed-tabs v-model="activeSelectmonthTab">
@@ -69,6 +54,24 @@
                     <v-icon dark>arrow_forward</v-icon>
                   </v-btn>
                 </v-layout>
+              </v-card>
+            </v-flex>
+          </v-layout>
+          <v-layout mb-1 justify-space-between row wrap>
+            <v-flex style="padding-top:0px" xs12 sm12 md12 lg12 xl12>
+              <v-card style="width:400px">
+                <v-card-text primary-title>
+                  <div style="display:flex;justify-content:space-around">
+                    <div style="display:flex;flex-direction:column;text-align:center">
+                      <span class="font-weight-bold" style="color:green">Tổng thu</span>
+                      <span class="font-weight-bold">{{formatPrice(countAmountByType[0])}} đ</span>
+                    </div>
+                    <div style="display:flex;flex-direction:column;text-align:center">
+                      <span class="font-weight-bold" style="color:red">Tổng chi</span>
+                      <span class="font-weight-bold">{{formatPrice(countAmountByType[1])}} đ</span>
+                    </div>
+                  </div>
+                </v-card-text>
               </v-card>
             </v-flex>
           </v-layout>
@@ -94,7 +97,9 @@
                         >{{formatDate(listItemByMonth[0].date,'MY')}}</span>
                       </div>
                     </div>
-                    <span class="sub-heading font-weight-bold">{{countAmount(listItemByMonth)}}</span>
+                    <span
+                      class="sub-heading font-weight-bold"
+                    >{{formatPrice(countAmount(listItemByMonth))}} đ</span>
                   </v-card-title>
                   <v-divider></v-divider>
                   <v-card-text
@@ -118,26 +123,22 @@
                       class="font-weight-bold"
                       v-if="item.type==='expense'"
                       style="color:red;align-self:center"
-                    >- {{item.amount}}</span>
+                    >- {{formatPrice(item.amount)}} đ</span>
                     <span
                       class="font-weight-bold"
                       v-else
                       style="color:green;align-self:center"
-                    >+ {{item.amount}}</span>
+                    >+ {{formatPrice(item.amount)}} đ</span>
                   </v-card-text>
                 </v-card>
               </v-flex>
             </v-layout>
           </template>
           <template v-else-if="dealList.length!==0  ">
-            <v-layout
-              justify-space-between
-              row
-              wrap
-            >
-              <v-flex xs12 sm12 md12 lg12 xl12 >
-                <v-card >
-                  <v-card-title  style="justify-content:center">Không có giao dịch trong tháng này</v-card-title>
+            <v-layout justify-space-between row wrap>
+              <v-flex xs12 sm12 md12 lg12 xl12>
+                <v-card>
+                  <v-card-title style="justify-content:center">Không có giao dịch trong tháng này</v-card-title>
                 </v-card>
               </v-flex>
             </v-layout>
@@ -145,7 +146,7 @@
         </v-container>
       </v-flex>
 
-      <v-dialog v-model="accountListDialog" max-width="600px" style="height:300px">
+      <v-dialog v-model="accountListDialog" max-width="300px" style="height:300px">
         <v-card>
           <v-card-title>
             <span class="headline">Danh sách tài khoản</span>
@@ -162,16 +163,14 @@
                 justify-center
                 v-if="accountLoading==false && account.length===0"
               >Hiện chưa có tài khoản nào</v-layout>
-              <div
-                v-else
-                class="font-weight-medium"
-                v-for="(item,index) in account"
-                :key="index"
-                @click="selectedAccountIndex=index;accountListDialog=false"
-              >
+              <div v-else class="font-weight-medium" v-for="(item,index) in account" :key="index">
                 <v-divider class="mb-2"/>
                 <v-layout justify-space-between mt-2 mb-2 align-center>
-                  <v-layout class="ml-2">
+                  <v-layout
+                    class="ml-2"
+                    style="cursor:pointer"
+                    @click="selectedAccountIndex=index,accountListDialog=false"
+                  >
                     <v-avatar :size="40" color=" lighten-4">
                       <img :src="accountIcon(item)" alt="avatar">
                     </v-avatar>
@@ -359,7 +358,9 @@ export default {
         { title: 'Điều chỉnh số dư', icon: 'equalizer' }
       ],
       modelChuyenKhoan: false,
-      modelDieuChinhSoDu: false
+      modelDieuChinhSoDu: false,
+      totalExpense: 0,
+      totalIncome: 0
     }
   },
   async mounted() {
@@ -478,6 +479,7 @@ export default {
       })
       return array
     },
+
     formatDate(date, type) {
       switch (type) {
         case 'MY':
@@ -517,7 +519,7 @@ export default {
       const dealbyDate = dealList.filter(
         item => moment(item.date).format('YYYY-MM') == this.monthFilter
       )
-      for (let i = 0; i < 31; i++) {
+      for (let i = 32; i > 0; i--) {
         let array = dealbyDate.filter(
           element => parseInt(moment(element.date).format('DD')) == i
         )
@@ -684,6 +686,23 @@ export default {
         .format('YYYY-MM')
     }
   },
+  computed: {
+    countAmountByType: function() {
+      let totalIncome = 0,
+        totalExpense = 0
+      this.filterDealbyDate(this.monthFilter, this.dealList).forEach(
+        element => {
+          element.forEach(element => {
+            if (element.type == 'expense') totalExpense += element.amount
+            else if ((element.type = 'income')) {
+              totalIncome += element.amount
+            }
+          })
+        }
+      )
+      return [totalIncome, totalExpense]
+    }
+  },
   watch: {
     editTotalDialog() {
       if (this.editTotalDialog == false) this.$refs.editTotalForm.reset()
@@ -734,7 +753,7 @@ export default {
       )
     },
     selectedAccountIndex() {
-      this.readDealData();
+      this.readDealData()
     }
   }
 }

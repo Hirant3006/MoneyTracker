@@ -377,23 +377,25 @@ export default {
         item => item.key == this.selectAccount
       )[0]
       const { amount, note, date, time, event, people } = this
-      const categories = this.selectCategory.name
-      const accountKey = accountItem.key
-      const type = this.selectCategory.type
-      const accountBalance = accountItem.balance
-      const selectedAccount = accountItem.name
+
       if (amount == '') {
         alert('Số tiền giao dịch phải lớn hơn 0')
-      } else if (this.categoriesType == null) {
-        alert('Vui lòng chọn hạng mục')
+        this.setSnack({ msg: 'Số tiền giao dịch phải lớn hơn 0', color: 'error' })
+      } else if (this.selectCategory == null) {
+        this.setSnack({ msg: 'Vui lòng chọn hạng mục', color: 'error' })
       } else if (this.selectAccount == null) {
-        alert('Vui lòng chọn ví')
+        this.setSnack({ msg: 'Vui lòng chọn ví', color: 'success' })
       } else if (
         (type == 'lend' && people == '') ||
         (type == 'borrow' && people == '')
       ) {
         alert('Vui lòng điền người cùng thực hiện giao dịch')
       } else {
+        const categories = this.selectCategory.name
+        const accountKey = accountItem.key
+        const type = this.selectCategory.type
+        const accountBalance = accountItem.balance
+        const selectedAccount = accountItem.name
         this.writeUserData(
           amount,
           categories,
@@ -409,6 +411,14 @@ export default {
         )
         this.setSnack({ msg: 'Đã thêm giao dịch thành công', color: 'success' })
         this.addDealDialog = false
+        this.amount = ''
+        this.note = null
+        this.people = null
+        this.event = null
+        this.date = new Date().toISOString().substr(0, 10)
+        this.time = '00:00'
+        this.selectAccount = null
+        this.selectCategory = null
         // this.clearData()
       }
     },
