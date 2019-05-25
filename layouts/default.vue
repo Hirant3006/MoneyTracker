@@ -386,10 +386,10 @@ export default {
       } else if (this.selectAccount == null) {
         this.setSnack({ msg: 'Vui lòng chọn ví', color: 'success' })
       } else if (
-        (type == 'lend' && people == '') ||
-        (type == 'borrow' && people == '')
+        (this.selectCategory.type == 'lend' && people == '') ||
+        (this.selectCategory.type == 'borrow' && people == '')
       ) {
-        alert('Vui lòng điền người cùng thực hiện giao dịch')
+        this.setSnack({ msg: 'Vui lòng điền người cùng thực hiện giao dịch', color: 'success' })
       } else {
         const categories = this.selectCategory.name
         const accountKey = accountItem.key

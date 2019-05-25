@@ -25,10 +25,10 @@
       <span>________OR________</span>
       <div class="m-t-20">
         <v-btn class="m-5 w-200" primary @click.native="googleSignUp">
-          <v-icon>fas fa-google</v-icon>Sign in with Google
+          <v-icon>fas fa-google</v-icon>Đăng nhập với Google
         </v-btn>
         <v-btn class="m-5 w-200" primary @click.native="facebookSignUp">
-          <v-icon>fas fa-facebook</v-icon>Sign In with Facebook
+          <v-icon>fas fa-facebook</v-icon>Đăng nhập với Facebook
         </v-btn>
       </div>
     </v-flex>

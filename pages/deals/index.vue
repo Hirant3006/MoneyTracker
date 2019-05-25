@@ -107,7 +107,7 @@
                     :key="index"
                     style="display:flex;justify-content:space-between"
                   >
-                    <div style="display:flex">
+                    <div style="display:flex;cursor:pointer" @click="onClickDetailDialog(item)">
                       <v-avatar>
                         <img :src="getIconCategories(item.categories)" alt>
                       </v-avatar>
@@ -222,6 +222,13 @@
         :accountItem="editAccountItem"
         :accountList="account"
       />
+      <!-- Deal Detail -->
+      <detailDealDialog
+        :detailDealDialog="detailDealDialog"
+         @close-dialog="detailDealDialog=false"
+        :dealItem="selecetedDealItem"
+        :accountList="account"
+      />
       <v-dialog v-model="editTotalDialog" max-width="600px" persistent style="height:40px">
         <v-card>
           <v-card-title>
@@ -307,6 +314,7 @@ import firebase from '@/services/fireinit.js'
 import addAccountDialog from '@/components/wallet/addAccountDialog.vue'
 import transferAccountDialog from '@/components/wallet/transferAccountDialog.vue'
 import editAccountDialog from '@/components/wallet/editAccountDialog.vue'
+import detailDealDialog from '@/components/deals/detailDealDialog.vue'
 import listAccountType from '@/common/accountType.js'
 import { mapMutations } from 'vuex'
 import moment from 'moment'
@@ -315,7 +323,8 @@ export default {
   components: {
     'add-account-dialog': addAccountDialog,
     'transfer-account-dialog': transferAccountDialog,
-    'edit-account-dialog': editAccountDialog
+    'edit-account-dialog': editAccountDialog,
+    'detailDealDialog': detailDealDialog
   },
   data: function() {
     return {
@@ -332,6 +341,7 @@ export default {
       editDialog: false,
       accountListDialog: false,
       confirmDialog: false,
+      detailDealDialog: false,
       deleteItem: null,
       editAccountItem: null,
       account: [],
@@ -345,6 +355,7 @@ export default {
       listMonth: [],
       preMonth: null,
       nextMonth: null,
+      selecetedDealItem: {},
       items: [
         {
           title: 'Chuyển khoản',
@@ -684,6 +695,11 @@ export default {
       this.listMonth[2] = moment(this.monthFilter)
         .add(1, 'months')
         .format('YYYY-MM')
+    },
+    onClickDetailDialog(item){
+      console.log(item);
+      this.selecetedDealItem=item;
+      this.detailDealDialog=true;
     }
   },
   computed: {
