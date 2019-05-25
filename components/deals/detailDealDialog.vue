@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="detailDealDialog" max-width="600px" persistent>
+  <v-dialog v-model="detailDealDialog" max-width="600px" lazy>
     <v-card>
       <v-card-title>
         <span class="headline pb-1">Chi tiết giao dịch</span>
@@ -479,7 +479,7 @@ export default {
       this.categoriesType = this.dealItem.categories
       this.note = this.dealItem.note
       this.date = moment(this.dealItem.date).format('YYYY-MM-DD')
-      this.time = moment(this.dealItem.time).format('HH:MM')
+      this.time = this.dealItem.time
       this.selectAccount = this.dealItem.account
       this.event = this.dealItem.event
       this.people = this.dealItem.people
