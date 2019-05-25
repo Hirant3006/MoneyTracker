@@ -1,8 +1,15 @@
 import Vuex from 'vuex'
 import firebase, { auth, GoogleProvider, FacebookProvider } from '@/services/fireinit.js'
+import snackbar from './snackbar'
+import users from './users'
 
 const createStore = () => {
   return new Vuex.Store({
+    namespaced: true,
+    modules: {
+      snackbar:snackbar,
+      user:users
+    },
     state: {
       user: null
     },
@@ -33,9 +40,9 @@ const createStore = () => {
           resolve()
         })
       },
-      signInWithEmail({ commit }, {email,password}) {
-        
-        return firebase.auth().signInWithEmailAndPassword(email, password)
+      signInWithEmail({ commit }, { email, password }) {
+
+        return auth.signInWithEmailAndPassword(email, password)
       },
 
       signOut({ commit }) {
@@ -45,21 +52,10 @@ const createStore = () => {
       },
 
       signUp({ commit }, { email, password }) {
-        return new Promise((resolve, reject) => {
-          auth.createUserWithEmailAndPassword(email, password)
-          resolve()
-        })
-
-        // return auth().createUserWithEmailAndPassword(email, password).catch(function (error) {
-        //   // Handle Errors here.
-
-        //   var errorCode = error.code;
-        //   var errorMessage = error.message;
-        //   // ...
-        //   console.log('Error ', error)
-
-        // }
-
+        return auth.createUserWithEmailAndPassword(email, password)
+      },
+      resetPassword({ commit }, { email }) {
+        return auth.sendPasswordResetEmail(email)
       }
     }
   })
