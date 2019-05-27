@@ -1,8 +1,20 @@
 <template>
   <v-app>
-    <v-navigation-drawer v-model="drawer" fixed app v-if="user">
+    <v-navigation-drawer
+      v-model="drawer"
+      fixed
+      app
+      v-if="user"
+    >
       <v-list>
-        <v-list-tile router nuxt exact v-for="(item, i) in items" :key="i" :to="item.to">
+        <v-list-tile
+          router
+          nuxt
+          exact
+          v-for="(item, i) in items"
+          :key="i"
+          :to="item.to"
+        >
           <v-list-tile-action>
             <v-icon v-html="item.icon"></v-icon>
           </v-list-tile-action>
@@ -12,22 +24,47 @@
         </v-list-tile>
       </v-list>
     </v-navigation-drawer>
-    <v-toolbar v-if="user" app>
-      <v-btn v-if="user" icon @click.native.stop="drawer = !drawer">
+    <v-toolbar
+      v-if="user"
+      app
+    >
+      <v-btn
+        v-if="user"
+        icon
+        @click.native.stop="drawer = !drawer"
+      >
         <v-icon>menu</v-icon>
       </v-btn>
-      <v-toolbar-title v-text="title" style="cursorLpinter" @click="toHomepage"></v-toolbar-title>
+      <v-toolbar-title
+        v-text="title"
+        style="cursorLpinter"
+        @click="toHomepage"
+      ></v-toolbar-title>
       <v-spacer></v-spacer>
-      <div v-if="user" id="user" class="text-xs-center">
-        <v-menu offset-x :close-on-content-click="false" :nudge-top="200">
-          <v-btn icon slot="activator">
+      <div
+        v-if="user"
+        id="user"
+        class="text-xs-center"
+      >
+        <v-menu
+          offset-x
+          :close-on-content-click="false"
+          :nudge-top="200"
+        >
+          <v-btn
+            icon
+            slot="activator"
+          >
             <v-icon medium>settings</v-icon>
           </v-btn>
           <v-card>
             <v-list>
               <v-list-tile avatar>
                 <v-list-tile-avatar>
-                  <img :src="$store.state.user.photoURL" alt="user">
+                  <img
+                    :src="$store.state.user.photoURL"
+                    alt="user"
+                  >
                 </v-list-tile-avatar>
                 <v-list-tile-content>
                   <v-list-tile-title v-if="user.displayName">{{user.displayName}}</v-list-tile-title>
@@ -40,7 +77,10 @@
                 @click="onToggleMore(info,item)"
               >
                 <v-spacer></v-spacer>
-                <v-icon style="margin-right: 20px;" class>{{info.icon}}</v-icon>
+                <v-icon
+                  style="margin-right: 20px;"
+                  class
+                >{{info.icon}}</v-icon>
                 <v-list-tile-title>{{ info.title }}</v-list-tile-title>
               </v-list-tile>
               <!-- <v-list-tile @click.native="logout">
@@ -56,7 +96,7 @@
     </v-toolbar>
     <v-content>
       <v-container fluid>
-        <nuxt/>
+        <nuxt />
         <v-card-text style="height: 100px; position: relative">
           <v-fab-transition>
             <v-btn
@@ -75,7 +115,10 @@
         </v-card-text>
       </v-container>
     </v-content>
-    <v-dialog v-model="addDealDialog" max-width="600px">
+    <v-dialog
+      v-model="addDealDialog"
+      max-width="600px"
+    >
       <v-card>
         <v-card-title>
           <span class="headline pb-1">Thêm giao dịch</span>
@@ -83,10 +126,23 @@
         <v-card-text style="padding-top:0">
           <v-form ref="forgetAccountForm">
             <v-layout wrap>
-              <v-flex xs12 sm12 md12>
-                <v-text-field label="Số tiền" type="number" v-model="amount" prefix="đ"></v-text-field>
+              <v-flex
+                xs12
+                sm12
+                md12
+              >
+                <v-text-field
+                  label="Số tiền"
+                  type="number"
+                  v-model="amount"
+                  prefix="đ"
+                ></v-text-field>
               </v-flex>
-              <v-flex xs12 sm12 md12>
+              <v-flex
+                xs12
+                sm12
+                md12
+              >
                 <v-text-field
                   prepend-icon="help"
                   label="Chọn hạng mục"
@@ -95,14 +151,30 @@
                   v-model="categoriesType"
                 ></v-text-field>
               </v-flex>
-              <v-flex xs12 sm12 md12>
-                <v-text-field prepend-icon="note" v-model="note" label="Ghi chú" persistent-hint></v-text-field>
+              <v-flex
+                xs12
+                sm12
+                md12
+              >
+                <v-text-field
+                  prepend-icon="note"
+                  v-model="note"
+                  label="Ghi chú"
+                  persistent-hint
+                ></v-text-field>
               </v-flex>
               <v-layout justify-space-between>
                 <!-- <v-flex xs9 sm9 md9>
                 <v-text-field prepend-icon="calendar_today" label="Ngày" required></v-text-field>
                 </v-flex>-->
-                <v-dialog ref="dialog" v-model="modaldate" persistent lazy full-width width="290px">
+                <v-dialog
+                  ref="dialog"
+                  v-model="modaldate"
+                  persistent
+                  lazy
+                  full-width
+                  width="290px"
+                >
                   <template v-slot:activator="{ on }">
                     <v-text-field
                       v-model="date"
@@ -112,9 +184,16 @@
                       v-on="on"
                     ></v-text-field>
                   </template>
-                  <v-date-picker v-model="date" scrollable></v-date-picker>
+                  <v-date-picker
+                    v-model="date"
+                    scrollable
+                  ></v-date-picker>
                 </v-dialog>
-                <v-flex xs3 sm3 md3>
+                <v-flex
+                  xs3
+                  sm3
+                  md3
+                >
                   <v-dialog
                     ref="dialog"
                     v-model="modaltime"
@@ -132,16 +211,32 @@
                         v-on="on"
                       ></v-text-field>
                     </template>
-                    <v-time-picker v-if="modaltime" v-model="time" full-width>
+                    <v-time-picker
+                      v-if="modaltime"
+                      v-model="time"
+                      full-width
+                    >
                       <v-spacer></v-spacer>
-                      <v-btn flat color="primary" @click="modaltime = false">Cancel</v-btn>
-                      <v-btn flat color="primary" @click="$refs.dialog.save(time)">OK</v-btn>
+                      <v-btn
+                        flat
+                        color="primary"
+                        @click="modaltime = false"
+                      >Cancel</v-btn>
+                      <v-btn
+                        flat
+                        color="primary"
+                        @click="$refs.dialog.save(time)"
+                      >OK</v-btn>
                     </v-time-picker>
                   </v-dialog>
                   <!-- <v-text-field prepend-icon="access_time" label="Giờ" required></v-text-field> -->
                 </v-flex>
               </v-layout>
-              <v-flex xs12 sm12 md12>
+              <v-flex
+                xs12
+                sm12
+                md12
+              >
                 <v-select
                   prepend-icon="featured_play_list"
                   item-text="name"
@@ -152,23 +247,53 @@
                   required
                 ></v-select>
               </v-flex>
-              <v-flex align-center xs12 sm12 md12>Chi tiết</v-flex>
-              <v-flex xs12 sm12 md12>
-                <v-text-field prepend-icon="event" v-model="event" label="Sự kiện" persistent-hint></v-text-field>
+              <v-flex
+                align-center
+                xs12
+                sm12
+                md12
+              >Chi tiết</v-flex>
+              <v-flex
+                xs12
+                sm12
+                md12
+              >
+                <v-text-field
+                  prepend-icon="event"
+                  v-model="event"
+                  label="Sự kiện"
+                  persistent-hint
+                ></v-text-field>
               </v-flex>
-              <v-flex xs12 sm12 md12>
-                <v-text-field prepend-icon="people" v-model="people" label="Với ai" persistent-hint></v-text-field>
+              <v-flex
+                xs12
+                sm12
+                md12
+              >
+                <v-text-field
+                  prepend-icon="people"
+                  v-model="people"
+                  label="Với ai"
+                  persistent-hint
+                ></v-text-field>
               </v-flex>
             </v-layout>
           </v-form>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" flat @click="onPressAddDeals">Thêm</v-btn>
+          <v-btn
+            color="blue darken-1"
+            flat
+            @click="onPressAddDeals"
+          >Thêm</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <v-dialog v-model="addRecordDialog" max-width="600px">
+    <v-dialog
+      v-model="addRecordDialog"
+      max-width="600px"
+    >
       <v-card>
         <v-card-title>
           <span class="headline pb-1">Ghi chép mẫu</span>
@@ -176,13 +301,33 @@
         <v-card-text style="padding-top:0">
           <v-form ref="forgetAccountForm">
             <v-layout wrap>
-              <v-flex xs12 sm12 md12>
-                <v-text-field prepend-icon="note" label="Tên ghi chép" persistent-hint></v-text-field>
+              <v-flex
+                xs12
+                sm12
+                md12
+              >
+                <v-text-field
+                  prepend-icon="note"
+                  label="Tên ghi chép"
+                  persistent-hint
+                ></v-text-field>
               </v-flex>
-              <v-flex xs12 sm12 md12>
-                <v-text-field label="Số tiền" value="10.00" prefix="$"></v-text-field>
+              <v-flex
+                xs12
+                sm12
+                md12
+              >
+                <v-text-field
+                  label="Số tiền"
+                  value="10.00"
+                  prefix="$"
+                ></v-text-field>
               </v-flex>
-              <v-flex xs12 sm12 md12>
+              <v-flex
+                xs12
+                sm12
+                md12
+              >
                 <v-select
                   prepend-icon="help"
                   :items="['0-17', '18-29', '30-54', '54+']"
@@ -190,10 +335,22 @@
                   required
                 ></v-select>
               </v-flex>
-              <v-flex xs12 sm12 md12>
-                <v-text-field prepend-icon="note" label="Ghi chú" persistent-hint></v-text-field>
+              <v-flex
+                xs12
+                sm12
+                md12
+              >
+                <v-text-field
+                  prepend-icon="note"
+                  label="Ghi chú"
+                  persistent-hint
+                ></v-text-field>
               </v-flex>
-              <v-flex xs12 sm12 md12>
+              <v-flex
+                xs12
+                sm12
+                md12
+              >
                 <v-select
                   prepend-icon="featured_play_list"
                   :items="['0-17', '18-29', '30-54', '54+']"
@@ -206,22 +363,51 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" flat @click="() => addDealDialog=false">Thêm</v-btn>
+          <v-btn
+            color="blue darken-1"
+            flat
+            @click="() => addDealDialog=false"
+          >Thêm</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <v-footer app :fixed="fixed" class="justify-center px-4">
+    <v-footer
+      app
+      :fixed="fixed"
+      class="justify-center px-4"
+    >
       <!-- <span>&copy; 2017</span> -->
     </v-footer>
-    <snackbar/>
+    <snackbar />
     <!-- Add categories -->
-    <v-dialog v-model="categoriesDialog" width="400px">
-      <v-tabs v-model="active" slider-color="cyan">
-        <v-tab v-for="type in listCategoriesType" :key="type" ripple>{{ type}}</v-tab>
-        <v-tab-item v-for="(cateType,index) in categories" :key="index">
-          <v-card v-if="index!=='dataExpense'" style="height:400px">
+    <v-dialog
+      v-model="categoriesDialog"
+      width="400px"
+    >
+      <v-tabs
+        v-model="active"
+        slider-color="cyan"
+      >
+        <v-tab
+          v-for="type in listCategoriesType"
+          :key="type"
+          ripple
+        >{{ type}}</v-tab>
+        <v-tab-item
+          v-for="(cateType,index) in categories"
+          :key="index"
+        >
+          <v-card
+            v-if="index!=='dataExpense'"
+            style="height:400px"
+          >
             <!-- {{cateType}} -->
-            <v-layout ml-2 mr-2 wrap justify-space-around>
+            <v-layout
+              ml-2
+              mr-2
+              wrap
+              justify-space-around
+            >
               <div
                 style="display:flex;flex-direction:column;align-items:center"
                 class="mt-2 ml-1 mr-1 mb-2"
@@ -230,12 +416,21 @@
                 xs4
                 @click="onClickCategoryType(item)"
               >
-                <img :src="item.icon" class="image" alt="item.icon" width="50px" height="50px">
+                <img
+                  :src="item.icon"
+                  class="image"
+                  alt="item.icon"
+                  width="50px"
+                  height="50px"
+                >
                 <span>{{item.name}}</span>
               </div>
             </v-layout>
           </v-card>
-          <v-card v-else style="height:400px">
+          <v-card
+            v-else
+            style="height:400px"
+          >
             <div
               class="pt-2"
               style="background-color:white"
@@ -250,7 +445,12 @@
                     <img :src="item.icon" class="image" alt="item.icon" width="50px" height="50px">
                   </div>
               </v-layout>-->
-              <v-layout justify-space-around ml-2 mr-2 wrap>
+              <v-layout
+                justify-space-around
+                ml-2
+                mr-2
+                wrap
+              >
                 <div
                   style="display:flex;flex-direction:column;align-items:center"
                   class="mt-2 ml-1 mr-1 mb-2"
@@ -259,7 +459,13 @@
                   xs4
                   @click="onClickCategoryType(item)"
                 >
-                  <img :src="item.icon" class="image" alt="item.icon" width="50px" height="50px">
+                  <img
+                    :src="item.icon"
+                    class="image"
+                    alt="item.icon"
+                    width="50px"
+                    height="50px"
+                  >
                   <span>{{item.name}}</span>
                 </div>
               </v-layout>
@@ -329,7 +535,8 @@ export default {
     }
   },
   async mounted() {
-    await this.readAccountData()
+    console.log('mounted layout')
+    if (this.$store.state.user) await this.readAccountData()
   },
   methods: {
     async readAccountData() {
@@ -380,7 +587,10 @@ export default {
 
       if (amount == '') {
         alert('Số tiền giao dịch phải lớn hơn 0')
-        this.setSnack({ msg: 'Số tiền giao dịch phải lớn hơn 0', color: 'error' })
+        this.setSnack({
+          msg: 'Số tiền giao dịch phải lớn hơn 0',
+          color: 'error'
+        })
       } else if (this.selectCategory == null) {
         this.setSnack({ msg: 'Vui lòng chọn hạng mục', color: 'error' })
       } else if (this.selectAccount == null) {
@@ -389,7 +599,10 @@ export default {
         (this.selectCategory.type == 'lend' && people == '') ||
         (this.selectCategory.type == 'borrow' && people == '')
       ) {
-        this.setSnack({ msg: 'Vui lòng điền người cùng thực hiện giao dịch', color: 'success' })
+        this.setSnack({
+          msg: 'Vui lòng điền người cùng thực hiện giao dịch',
+          color: 'success'
+        })
       } else {
         const categories = this.selectCategory.name
         const accountKey = accountItem.key
