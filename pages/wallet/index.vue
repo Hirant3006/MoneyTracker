@@ -182,13 +182,14 @@ const dummieAccount = [
     total: 2000000
   }
 ]
-import firebase from '@/services/fireinit.js'
 import addAccountDialog from '@/components/wallet/addAccountDialog.vue'
 import transferAccountDialog from '@/components/wallet/transferAccountDialog.vue'
 import editAccountDialog from '@/components/wallet/editAccountDialog.vue'
 import listAccountType from '@/common/accountType.js'
 import { mapMutations } from 'vuex'
 import moment from 'moment'
+import firebase from '@/services/fireinit.js'
+
 export default {
   components: {
     'add-account-dialog': addAccountDialog,

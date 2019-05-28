@@ -20,44 +20,34 @@
                       style="color:red"
                       justify-center
                     >Hiện chưa có hạn mức chi nào</v-layout>
-                    <!-- <div
+                    <v-container
                       class="font-weight-medium"
-                      v-for="(item,index) in account"
+                      v-for="(item,index) in budgets"
                       :key="index"
-                      style="padding:0"
                     >
                       <v-divider class="mb-2"/>
-                      <v-layout justify-space-between mt-4 mb-2 align-center>
-                        <v-layout class="ml-2">
-                          <v-avatar :size="40" color=" lighten-4">
-                            <img :src="accountIcon(item)" alt="avatar">
-                          </v-avatar>
-                          <div class="ml-3">
-                            <span>{{item.name}}</span>
-                            <br>
-                            <span>{{formatPrice(item.balance)}} đ</span>
-                          </div>
-                        </v-layout>
-
-                        <v-menu offset-y>
-                          <template v-slot:activator="{ on }">
-                            <v-btn flat icon v-on="on">
-                              <v-icon>more_vert</v-icon>
-                            </v-btn>
-                          </template>
-                          <v-list>
-                            <v-list-tile
-                              v-for="(info, index) in items"
-                              :key="index"
-                              @click="onToggleMore(info,item)"
-                            >
-                              <v-icon style="margin-right: 20px;" class>{{info.icon}}</v-icon>
-                              <v-list-tile-title>{{ info.title }}</v-list-tile-title>
-                            </v-list-tile>
-                          </v-list>
-                        </v-menu>
+                      <v-layout justify-space-between>
+                        <div>
+                          <v-list-tile-title :key="index">{{item.nameBudget}}</v-list-tile-title>
+                          <v-list-tile-sub-title>{{formatDate(item.startDate,'DM')}} - {{formatDate(item.endDate,'DM')}}</v-list-tile-sub-title>
+                        </div>
+                        <div style="align-self:flex-end">
+                          <v-list-tile-title :key="index">{{item.amount}}</v-list-tile-title>
+                        </div>
                       </v-layout>
-                    </div> -->
+                      <v-progress-linear
+                        :value="listpercentbudgets[index]"
+                        :color="listpercentbudgets[index]>100 ? 'red' : 'blue'"
+                      ></v-progress-linear>
+                      <v-layout justify-space-between>
+                        <div>
+                          <v-list-tile-title>Còn 10 ngày</v-list-tile-title>
+                        </div>
+                        <div>
+                          <v-list-tile-title>{{item.spend}}</v-list-tile-title>
+                        </div>
+                      </v-layout>
+                    </v-container>
                   </v-list>
                 </div>
               </v-card-title>
@@ -70,10 +60,152 @@
 </template>
 
 <script>
+import { mapMutations } from 'vuex'
+import moment from 'moment'
+import firebase from '@/services/fireinit.js'
+
 export default {
   data: function() {
     return {
+      budgets: [],
+      listpercentbudgets: []
+    }
+  },
+  methods: {
+    formatDate(date, type) {
+      switch (type) {
+        case 'DM':
+          return moment(date).format('DD/MM')
+        case 'MY':
+          return moment(date).format('MM-YYYY')
+        case 'YMD':
+          // code block
+          return moment(date).format('YYYY-MM-DD')
+        case 'D':
+          return moment(date).format('DD')
+        case 'M':
+          return moment(date).format('MM')
+        case 'Y':
+          return moment(date).format('YYYY')
+        case 'W':
+          switch (moment(date).day()) {
+            case 1:
+              return 'Monday'
+            case 2:
+              return 'Tuesday'
+            case 3:
+              return 'Wednesday'
+            case 4:
+              return 'Thursday'
+            case 5:
+              return 'Friday'
+            case 6:
+              return 'Saturday'
+            case 7:
+              return 'Sunday'
+          }
+        default:
+          return null
+      }
+    },
+    toggleModalAddLimit() {},
+    async readBudgetData() {
+      let array = []
+      const uid = await firebase.auth().currentUser.uid
+      var ref = await firebase.database().ref(`${uid}/Budget`)
+      await ref.on('value', snapshot => {
+        let keys = (snapshot.val() && Object.keys(snapshot.val())) || []
+        keys.map((item, index) => {
+          array.push(snapshot.val()[item])
+          // totalBalance = totalBalance + snapshot.val()[item].balance
+        })
+        this.budgets = array
+        // totalBalance = 0
+        array = []
+      })
+    },
+    async readAccountData() {
+      let array = []
+      const uid = await firebase.auth().currentUser.uid
+      var ref = await firebase
+        .database()
+        .ref(`${uid}/Account`)
+        .once('value', snapshot => {
+          let keys = (snapshot.val() && Object.keys(snapshot.val())) || []
+          keys.map((item, index) => {
+            array.push(snapshot.val()[item])
+          })
+        })
+      return array
+    },
+    async readDealDatabyAccount(accountKey) {
+      let array = []
+      const uid = await firebase.auth().currentUser.uid
+      await firebase
+        .database()
+        .ref(`${uid}/Deals/${accountKey}`)
+        .once('value', snapshot => {
+          let keys = (snapshot.val() && Object.keys(snapshot.val())) || []
+          keys.map((item, index) => {
+            array.push(snapshot.val()[item])
+          })
+        })
+      return array
+    }
+  },
+  mounted() {
+    this.readBudgetData()
+  },
+  watch: {
+    async budgets() {
+      console.log('budget ', this.budgets)
+      this.listpercentbudgets = []
+      const listaccount = await this.readAccountData()
+      console.log('listaccount ', listaccount)
+      this.budgets.forEach(async (item, index) => {
+        let spent = 0
+        if (item.accountKey) {
+          const dealdata = await this.readDealDatabyAccount(item.accountKey)
+          dealdata.forEach(element => {
+            if (
+              moment(element.date).diff(moment(item.startDate)) > 0 &&
+              moment(element.date).diff(moment(item.endDate)) < 0 &&
+              element.categories === item.categories
+            ) {
+              spent += element.amount
+            }
+          })
+          this.listpercentbudgets.push(Number((spent * 100) / item.amount))
+          // this.listpercentbudgets.reverse()
+        } else {
+          listaccount.forEach(async accountitem => {
+            const dealdata = await this.readDealDatabyAccount(accountitem.key)
+            dealdata.forEach((element, index) => {
+              // console.log('Deal data',element);
+              // console.log([moment(element.date).diff(moment(item.startDate)),moment(element.date).diff(moment(item.endDate))])
+              // console.log(element.categories===item.categories)
+              if (
+                moment(element.date).diff(moment(item.startDate)) > 0 &&
+                moment(element.date).diff(moment(item.endDate)) < 0 &&
+                element.categories === item.categories
+              ) {
+                spent += element.amount
+                console.log('wadwadwadwa', [dealdata.length, index])
 
+                if (dealdata.length - 1 === index) {
+                  console.log('spent ', spent)
+                  this.listpercentbudgets.push(
+                    Number((spent * 100) / item.amount)
+                  )
+                }
+              }
+            })
+          })
+        }
+      })
+    },
+    listpercentbudgets() {
+      console.log(this.listpercentbudgets)
     }
   }
 }
