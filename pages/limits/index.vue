@@ -3,12 +3,13 @@
     <v-flex xs12 sm8>
       <v-container grid-list-lg>
         <v-layout justify-space-between row wrap>
+          <h2 class="mb-4">Hạn mức chi</h2>
           <v-flex xs12 sm12 md12 lg12 xl12>
             <v-card>
               <v-card-title primary-title>
                 <div style="width:100%">
                   <v-layout pl-1 pr-1 justify-space-between>
-                    <h4 style="align-self:center">Hạn mức chi</h4>
+                    <h4 class="ml-3" style="align-self:center">Hạn mức chi</h4>
                     <v-btn icon>
                       <v-icon @click="toggleModalAddLimit">add</v-icon>
                     </v-btn>
@@ -19,34 +20,16 @@
                       mb-1
                       style="color:red"
                       justify-center
+                      v-if="budgets.length===0"
                     >Hiện chưa có hạn mức chi nào</v-layout>
                     <v-container
                       class="font-weight-medium"
+                      style="padding-top:0px"
                       v-for="(item,index) in budgets"
                       :key="index"
+                      v-else
                     >
-                      <v-divider class="mb-2"/>
-                      <v-layout justify-space-between>
-                        <div>
-                          <v-list-tile-title :key="index">{{item.nameBudget}}</v-list-tile-title>
-                          <v-list-tile-sub-title>{{formatDate(item.startDate,'DM')}} - {{formatDate(item.endDate,'DM')}}</v-list-tile-sub-title>
-                        </div>
-                        <div style="align-self:flex-end">
-                          <v-list-tile-title :key="index">{{item.amount}}</v-list-tile-title>
-                        </div>
-                      </v-layout>
-                      <v-progress-linear
-                        :value="listpercentbudgets[index]"
-                        :color="listpercentbudgets[index]>100 ? 'red' : 'blue'"
-                      ></v-progress-linear>
-                      <v-layout justify-space-between>
-                        <div>
-                          <v-list-tile-title>Còn 10 ngày</v-list-tile-title>
-                        </div>
-                        <div>
-                          <v-list-tile-title>{{item.spend}}</v-list-tile-title>
-                        </div>
-                      </v-layout>
+                      <budget-item :budgetItem="item"/>
                     </v-container>
                   </v-list>
                 </div>
@@ -63,12 +46,17 @@
 import { mapMutations } from 'vuex'
 import moment from 'moment'
 import firebase from '@/services/fireinit.js'
+import budgetItem from '@/components/limits/budgetItem.vue'
 
 export default {
+  components: {
+    'budget-item': budgetItem
+  },
   data: function() {
     return {
       budgets: [],
-      listpercentbudgets: []
+      listpercentbudgets: [],
+      listDealDataByAccount: []
     }
   },
   methods: {
@@ -107,6 +95,10 @@ export default {
         default:
           return null
       }
+    },
+    formatPrice(value) {
+      let val = (value / 1).toFixed(0).replace('.', ',')
+      return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
     },
     toggleModalAddLimit() {},
     async readBudgetData() {
@@ -151,61 +143,27 @@ export default {
           })
         })
       return array
+    },
+    countdownDay(endDate) {
+      let milisecondTime = moment(endDate).diff(moment(new Date()))
+      const day = Math.floor(milisecondTime / 1000 / 60 / 60 / 24),
+        hour = Math.floor(
+          (milisecondTime / 1000 / 60 / 60 / 24 -
+            Math.floor(milisecondTime / 1000 / 60 / 60 / 24)) *
+            24
+        )
+
+      return `${day} ngày ${hour} giờ`
+
+      // return (`Còn ${Number(milisecondTime/1000/60/60/24)} ngày ${Number((milisecondTime/1000/60/60/24-Number(milisecondTime/1000/60/60/24))*24)} giờ`)
     }
   },
   mounted() {
     this.readBudgetData()
   },
   watch: {
-    async budgets() {
-      console.log('budget ', this.budgets)
-      this.listpercentbudgets = []
-      const listaccount = await this.readAccountData()
-      console.log('listaccount ', listaccount)
-      this.budgets.forEach(async (item, index) => {
-        let spent = 0
-        if (item.accountKey) {
-          const dealdata = await this.readDealDatabyAccount(item.accountKey)
-          dealdata.forEach(element => {
-            if (
-              moment(element.date).diff(moment(item.startDate)) > 0 &&
-              moment(element.date).diff(moment(item.endDate)) < 0 &&
-              element.categories === item.categories
-            ) {
-              spent += element.amount
-            }
-          })
-          this.listpercentbudgets.push(Number((spent * 100) / item.amount))
-          // this.listpercentbudgets.reverse()
-        } else {
-          listaccount.forEach(async accountitem => {
-            const dealdata = await this.readDealDatabyAccount(accountitem.key)
-            dealdata.forEach((element, index) => {
-              // console.log('Deal data',element);
-              // console.log([moment(element.date).diff(moment(item.startDate)),moment(element.date).diff(moment(item.endDate))])
-              // console.log(element.categories===item.categories)
-              if (
-                moment(element.date).diff(moment(item.startDate)) > 0 &&
-                moment(element.date).diff(moment(item.endDate)) < 0 &&
-                element.categories === item.categories
-              ) {
-                spent += element.amount
-                console.log('wadwadwadwa', [dealdata.length, index])
-
-                if (dealdata.length - 1 === index) {
-                  console.log('spent ', spent)
-                  this.listpercentbudgets.push(
-                    Number((spent * 100) / item.amount)
-                  )
-                }
-              }
-            })
-          })
-        }
-      })
-    },
     listpercentbudgets() {
-      console.log(this.listpercentbudgets)
+      // console.log(this.listpercentbudgets)
     }
   }
 }
