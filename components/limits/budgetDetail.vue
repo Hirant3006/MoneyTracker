@@ -1,17 +1,34 @@
 <template>
   <v-dialog v-model="budgetDetailDialog" max-width="500px" persistent>
     <v-card>
-      <v-card-title style="justify-content:space-between;padding-bottom:0px">
-        <span class="headline font-weight-medium">Chi tiết hạn mức  &nbsp;</span>
-        <v-btn icon>
-          <v-icon>more_vert</v-icon>
-        </v-btn>
+      <v-card-title>
+        <span class="headline font-weight-medium">Chi tiết hạn mức</span>
+        <v-spacer></v-spacer>
+        <v-menu offset-y ml-5>
+          <template v-slot:activator="{ on }">
+            <v-btn flat icon v-on="on">
+              <v-icon>more_vert</v-icon>
+            </v-btn>
+          </template>
+          <v-list>
+            <v-list-tile
+              v-for="(info, index) in items"
+              :key="index"
+              @click="onToggleMore(info,item)"
+              style="padding-left:0px;border:0px"
+            >
+              <v-icon style="margin-right: 10px;" class>{{info.icon}}</v-icon>
+              <v-list-tile-title>{{ info.title }}</v-list-tile-title>
+            </v-list-tile>
+          </v-list>
+        </v-menu>
       </v-card-title>
       <v-card-text style="padding-top:0px">
         <span class="subheading font-weight-medium mb-3">
           <v-avatar size="40px" color="grey lighten-4">
             <img :src="getIconCategories(budgetItem.categories) ">
-          </v-avatar> &nbsp;
+          </v-avatar>
+          &nbsp;
           {{budgetItem.nameBudget}}
         </span>
         <v-layout
@@ -106,12 +123,27 @@
         <v-btn color="blue darken-1" flat @click="$emit('close-dialog')">Đóng</v-btn>
       </v-card-actions>
     </v-card>
+    <v-dialog v-model="confirmDialog" persistent max-width="290">
+      <v-card>
+        <v-card-title class="subheading">
+          <h4>Bạn muốn xoá hạn mức này ?</h4>
+        </v-card-title>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="green darken-1" flat @click="confirmDialog = false">Không</v-btn>
+          <v-btn color="green darken-1" flat @click="onPressDeleteBudget">Có</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-dialog>
 </template>
 
 <script>
 import moment from 'moment'
 import { extendMoment } from 'moment-range'
+import { mapMutations } from 'vuex'
+import firebase from '@/services/fireinit.js'
+
 const Moment = extendMoment(moment)
 
 export default {
@@ -119,6 +151,14 @@ export default {
     return {
       Moment: Moment,
       moment: moment,
+      confirmDialog: false,
+      items: [
+        {
+          title: 'Sửa',
+          icon: 'edit'
+        },
+        { title: 'Xóa', icon: 'delete' }
+      ],
       time: '',
       pagination: {},
       paging: {
@@ -156,6 +196,28 @@ export default {
     }
   },
   methods: {
+    ...mapMutations({
+      setSnack: 'snackbar/setSnack'
+    }),
+    async onPressDeleteBudget() {
+      const uid = await firebase.auth().currentUser.uid
+      await firebase
+        .database()
+        .ref(`${uid}/Budget/${this.budgetItem.key}`)
+        .remove()
+      this.$emit('close-dialog');
+      this.setSnack({ msg: 'Xóa hạn mức thành công', color: 'success' })
+    },
+    onToggleMore(info, item) {
+      if (info.title === 'Xóa') {
+        this.confirmDialog = true
+        this.deleteItem = item
+      }
+      if (info.title === 'Sửa') {
+        this.editDialog = true
+        this.editAccountItem = item
+      }
+    },
     getIconCategories(categorieName) {
       switch (categorieName) {
         case 'Ăn tiệm':
@@ -342,8 +404,8 @@ export default {
     }
   },
   mounted() {
-    console.log(this.listDealData)
-    console.log(this.budgetItem)
+    // console.log(this.listDealData)
+    // console.log(this.budgetItem)
 
     this.time = this.convertMiliseconds(
       Moment()

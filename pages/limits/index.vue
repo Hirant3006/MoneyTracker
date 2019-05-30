@@ -39,6 +39,7 @@
         </v-layout>
       </v-container>
     </v-flex>
+    <add-budget-dialog :addBudgetDialog="addBudgetDialog"/>
   </v-layout>
 </template>
 
@@ -47,13 +48,15 @@ import { mapMutations } from 'vuex'
 import moment from 'moment'
 import firebase from '@/services/fireinit.js'
 import budgetItem from '@/components/limits/budgetItem.vue'
-
+import addBudgetDialog from '@/components/limits/addBudgetDialog.vue'
 export default {
   components: {
-    'budget-item': budgetItem
+    'budget-item': budgetItem,
+    'add-budget-dialog' : addBudgetDialog
   },
   data: function() {
     return {
+      addBudgetDialog:true,
       budgets: [],
       listpercentbudgets: [],
       listDealDataByAccount: []
@@ -162,8 +165,8 @@ export default {
     this.readBudgetData()
   },
   watch: {
-    listpercentbudgets() {
-      // console.log(this.listpercentbudgets)
+    budgets() {
+      console.log(this.budgets)
     }
   }
 }

@@ -234,6 +234,100 @@ export default {
     this.readAccountData()
   },
   methods: {
+    getIconCategories(categorieName) {
+      switch (categorieName) {
+        case 'Ăn tiệm':
+          return require('@/assets/Image/breakfast.png')
+        case 'Cafe':
+          return require('@/assets/Image/coffee-cup.png')
+        case 'Ăn nhậu':
+          return require('@/assets/Image/beer.png')
+        case 'Đồ chơi':
+          return require('@/assets/Image/toys.png')
+        case 'Học phí':
+          return require('@/assets/Image/money.png')
+        case 'Sách vở':
+          return require('@/assets/Image/open-book.png')
+        case 'Sữa':
+          return require('@/assets/Image/milk.png')
+        case 'Tiền tiêu vặt':
+          return require('@/assets/Image/money.png')
+        case 'Điện':
+          return require('@/assets/Image/idea.png')
+        case 'Điện thoại cố định':
+          return require('@/assets/Image/cellular.png')
+        case 'Điện thoại di dộng':
+          return require('@/assets/Image/smartphone.png')
+        case 'Gas':
+          return require('@/assets/Image/fire.png')
+        case 'Internet':
+          return require('@/assets/Image/wifi.png')
+        case 'Nước':
+          return require('@/assets/Image/drop.png')
+        case 'Truyền hình':
+          return require('@/assets/Image/television.png')
+        case 'Bảo hiểm xe':
+          return require('@/assets/Image/car-insurance.png')
+        case 'Gửi xe':
+          return require('@/assets/Image/parking.png')
+        case 'Rửa xe':
+          return require('@/assets/Image/car-wash.png')
+        case 'Sửa chữa':
+          return require('@/assets/Image/car-lift.png')
+        case 'Taxi/ thuê xe':
+          return require('@/assets/Image/taxi.png')
+        case 'Xăng xe':
+          return require('@/assets/Image/gas.png')
+        case 'Biếu tặng':
+          return require('@/assets/Image/gift.png')
+        case 'Sinh nhật':
+          return require('@/assets/Image/birthday-cake.png')
+        case 'Cưới xin':
+          return require('@/assets/Image/rings.png')
+        case 'Du lịch':
+          return require('@/assets/Image/world.png')
+        case 'Làm đẹp':
+          return require('@/assets/Image/lipstick.png')
+        case 'Mỹ phẩm':
+          return require('@/assets/Image/lipstick.png')
+        case 'Phim ảnh, ca nhạc':
+          return require('@/assets/Image/popcorn.png')
+        case 'Khám, chữa bệnh':
+          return require('@/assets/Image/stethoscope.png')
+        case 'Thuốc men':
+          return require('@/assets/Image/medicine.png')
+        case 'Giày, dép':
+          return require('@/assets/Image/shoe.png')
+        case 'Quần, áo':
+          return require('@/assets/Image/tshirt.png')
+        case 'Phụ kiện khác':
+          return require('@/assets/Image/tie.png')
+        case 'Tiền thưởng':
+          return require('@/assets/Image/bonus.png')
+        case 'Lương':
+          return require('@/assets/Image/salary.png')
+        case 'Được tặng':
+          return require('@/assets/Image/gift.png')
+        case 'Bán đồ':
+          return require('@/assets/Image/sale.png')
+        case 'Khoản thu khác':
+          return require('@/assets/Image/money.png')
+        case 'Khoản chi khác':
+          return require('@/assets/Image/money.png')
+        case 'Đi vay':
+          return require('@/assets/Image/offer.png')
+        case 'Thu nợ':
+          return require('@/assets/Image/repay.png')
+        case 'Trả nợ':
+          return require('@/assets/Image/payment-method.png')
+        case 'Cho vay':
+          return require('@/assets/Image/save-money.png')
+        case 'Chuyển khoản':
+          return require('@/assets/Image/transfer.png')
+        default:
+          return require('@/assets/Image/question-mark.png')
+      }
+    },
     ...mapMutations({
       setSnack: 'snackbar/setSnack'
     }),
@@ -271,7 +365,7 @@ export default {
       }
       if (info.title === 'Sửa') {
         this.editDialog = true
-        this.editAccountItem = item 
+        this.editAccountItem = item
       }
     },
     async readAccountData() {

@@ -1,19 +1,23 @@
 <template>
   <div>
     <div>
-      <v-divider class="mb-2"/>
+      <v-divider class="mb-3"/>
       <v-layout justify-space-between @click="budgetDetailDialog=true" style="cursor:pointer">
-        <div>
-          <v-list-tile-title>{{budgetItem.nameBudget}}</v-list-tile-title>
-          <v-list-tile-sub-title>{{formatDate(budgetItem.startDate,'DM')}} - {{formatDate(budgetItem.endDate,'DM')}}</v-list-tile-sub-title>
+        <div style="display:flex">
+          <v-avatar size="40px" color="grey lighten-4">
+            <img :src="getIconCategories(budgetItem.categories) ">
+          </v-avatar>
+          <div class="ml-3">
+            <v-list-tile-title>{{budgetItem.nameBudget}}</v-list-tile-title>
+            <v-list-tile-sub-title>{{formatDate(budgetItem.startDate,'DM')}} - {{formatDate(budgetItem.endDate,'DM')}}</v-list-tile-sub-title>
+          </div>
         </div>
         <div style="align-self:center">
           <v-list-tile-title>{{formatPrice(budgetItem.amount)}} đ</v-list-tile-title>
-          
         </div>
       </v-layout>
       <v-progress-linear :value="process" :color="process>100 ? 'red' : 'blue'"></v-progress-linear>
-      <v-layout justify-space-between>
+      <v-layout justify-space-between mb-2>
         <div>
           <v-list-tile-title>Còn {{countdownDay(budgetItem.endDate)}}</v-list-tile-title>
         </div>
@@ -62,6 +66,100 @@ export default {
     this.readBudgetData()
   },
   methods: {
+    getIconCategories(categoriesName) {
+      switch (categoriesName) {
+        case 'Ăn tiệm':
+          return require('@/assets/Image/breakfast.png')
+        case 'Cafe':
+          return require('@/assets/Image/coffee-cup.png')
+        case 'Ăn nhậu':
+          return require('@/assets/Image/beer.png')
+        case 'Đồ chơi':
+          return require('@/assets/Image/toys.png')
+        case 'Học phí':
+          return require('@/assets/Image/money.png')
+        case 'Sách vở':
+          return require('@/assets/Image/open-book.png')
+        case 'Sữa':
+          return require('@/assets/Image/milk.png')
+        case 'Tiền tiêu vặt':
+          return require('@/assets/Image/money.png')
+        case 'Điện':
+          return require('@/assets/Image/idea.png')
+        case 'Điện thoại cố định':
+          return require('@/assets/Image/cellular.png')
+        case 'Điện thoại di dộng':
+          return require('@/assets/Image/smartphone.png')
+        case 'Gas':
+          return require('@/assets/Image/fire.png')
+        case 'Internet':
+          return require('@/assets/Image/wifi.png')
+        case 'Nước':
+          return require('@/assets/Image/drop.png')
+        case 'Truyền hình':
+          return require('@/assets/Image/television.png')
+        case 'Bảo hiểm xe':
+          return require('@/assets/Image/car-insurance.png')
+        case 'Gửi xe':
+          return require('@/assets/Image/parking.png')
+        case 'Rửa xe':
+          return require('@/assets/Image/car-wash.png')
+        case 'Sửa chữa':
+          return require('@/assets/Image/car-lift.png')
+        case 'Taxi/ thuê xe':
+          return require('@/assets/Image/taxi.png')
+        case 'Xăng xe':
+          return require('@/assets/Image/gas.png')
+        case 'Biếu tặng':
+          return require('@/assets/Image/gift.png')
+        case 'Sinh nhật':
+          return require('@/assets/Image/birthday-cake.png')
+        case 'Cưới xin':
+          return require('@/assets/Image/rings.png')
+        case 'Du lịch':
+          return require('@/assets/Image/world.png')
+        case 'Làm đẹp':
+          return require('@/assets/Image/lipstick.png')
+        case 'Mỹ phẩm':
+          return require('@/assets/Image/lipstick.png')
+        case 'Phim ảnh, ca nhạc':
+          return require('@/assets/Image/popcorn.png')
+        case 'Khám, chữa bệnh':
+          return require('@/assets/Image/stethoscope.png')
+        case 'Thuốc men':
+          return require('@/assets/Image/medicine.png')
+        case 'Giày, dép':
+          return require('@/assets/Image/shoe.png')
+        case 'Quần, áo':
+          return require('@/assets/Image/tshirt.png')
+        case 'Phụ kiện khác':
+          return require('@/assets/Image/tie.png')
+        case 'Tiền thưởng':
+          return require('@/assets/Image/bonus.png')
+        case 'Lương':
+          return require('@/assets/Image/salary.png')
+        case 'Được tặng':
+          return require('@/assets/Image/gift.png')
+        case 'Bán đồ':
+          return require('@/assets/Image/sale.png')
+        case 'Khoản thu khác':
+          return require('@/assets/Image/money.png')
+        case 'Khoản chi khác':
+          return require('@/assets/Image/money.png')
+        case 'Đi vay':
+          return require('@/assets/Image/offer.png')
+        case 'Thu nợ':
+          return require('@/assets/Image/repay.png')
+        case 'Trả nợ':
+          return require('@/assets/Image/payment-method.png')
+        case 'Cho vay':
+          return require('@/assets/Image/save-money.png')
+        case 'Chuyển khoản':
+          return require('@/assets/Image/transfer.png')
+        default:
+          return require('@/assets/Image/question-mark.png')
+      }
+    },
     async readBudgetData() {
       let totalSpent = 0
       let array = []
@@ -76,10 +174,10 @@ export default {
               if (
                 moment(snapshot.val()[item].date).diff(
                   moment(this.budgetItem.startDate)
-                ) > 0 &&
+                ) >= 0 &&
                 moment(snapshot.val()[item].date).diff(
                   moment(this.budgetItem.endDate)
-                ) < 0
+                ) <= 0
               ) {
                 if (
                   snapshot.val()[item].categories === this.budgetItem.categories
@@ -90,7 +188,7 @@ export default {
                 }
               }
             })
-            let processRate = totalSpent / this.budgetItem.amount
+            let processRate = totalSpent*100 / this.budgetItem.amount
             let remain = this.budgetItem.amount - totalSpent
             this.process = processRate
             this.dealDataByBudget = array
@@ -107,20 +205,19 @@ export default {
             let keys = (snapshot.val() && Object.keys(snapshot.val())) || []
             keys.map(async (item, index) => {
               if (
-                moment(snapshot.val()[item].date).diff(moment(item.startDate)) >
+                moment(snapshot.val()[item].date).diff(
+                  moment(this.budgetItem.startDate)
+                ) >= 0 &&
+                moment(snapshot.val()[item].date).diff(moment(this.budgetItem.endDate)) <=
                   0 &&
-                moment(snapshot.val()[item].date).diff(moment(item.endDate)) < 0
+                snapshot.val()[item].categories === this.budgetItem.categories
               ) {
-                if (
-                  snapshot.val()[item].categories === this.budgetItem.categories
-                ) {
-                  totalSpent =
-                    totalSpent + parseInt(snapshot.val()[item].amount)
-                  array.push(snapshot.val()[item])
-                }
+                totalSpent = totalSpent + parseInt(snapshot.val()[item].amount)
+                array.push(snapshot.val()[item])
               }
             })
-            let processRate = totalSpent / this.budgetItem.amount
+
+            let processRate = totalSpent*100 / this.budgetItem.amount
             let remain = this.budgetItem.amount - totalSpent
             this.process = processRate
             this.dealDataByBudget = array
@@ -192,7 +289,9 @@ export default {
     }
   },
   watch: {
-    process() {}
+    process() {
+      // console.log('Budget Item ',this)
+    }
   }
 }
 </script>
