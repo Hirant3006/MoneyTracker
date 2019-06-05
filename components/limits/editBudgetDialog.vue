@@ -292,6 +292,7 @@ export default {
     date2() {
       this.modaldate2 = false
     },
+  }
 }
 </script>
 
