@@ -11,7 +11,7 @@
                   <v-layout pl-1 pr-1 justify-space-between>
                     <h4 class="ml-3" style="align-self:center">Hạn mức chi</h4>
                     <v-btn icon>
-                      <v-icon @click="toggleModalAddLimit">add</v-icon>
+                      <v-icon @click="addBudgetDialog=true">add</v-icon>
                     </v-btn>
                   </v-layout>
                   <v-list>
@@ -39,7 +39,7 @@
         </v-layout>
       </v-container>
     </v-flex>
-    <add-budget-dialog :addBudgetDialog="addBudgetDialog"/>
+    <add-budget-dialog :addBudgetDialog="addBudgetDialog" @close-dialog="addBudgetDialog=false"/>
   </v-layout>
 </template>
 
@@ -56,13 +56,16 @@ export default {
   },
   data: function() {
     return {
-      addBudgetDialog:true,
+      addBudgetDialog:false,
       budgets: [],
       listpercentbudgets: [],
       listDealDataByAccount: []
     }
   },
   methods: {
+    ...mapMutations({
+      setSnack: 'snackbar/setSnack'
+    }),
     formatDate(date, type) {
       switch (type) {
         case 'DM':
@@ -157,9 +160,8 @@ export default {
         )
 
       return `${day} ngày ${hour} giờ`
-
-      // return (`Còn ${Number(milisecondTime/1000/60/60/24)} ngày ${Number((milisecondTime/1000/60/60/24-Number(milisecondTime/1000/60/60/24))*24)} giờ`)
-    }
+    },
+   
   },
   mounted() {
     this.readBudgetData()

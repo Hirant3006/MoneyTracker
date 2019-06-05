@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="addBudgetDialog" persistent max-width="600px">
+  <v-dialog v-model="addBudgetDialog" max-width="600px">
     <v-card>
       <v-card-title>
         <span class="headline pb-1">Thêm hạn mức</span>
@@ -13,7 +13,7 @@
             <v-flex xs12 sm12 md12>
               <v-text-field
                 prepend-icon="assignment"
-                v-model="name"
+                v-model="nameBudget"
                 label="Tên hạn mức"
                 persistent-hint
               ></v-text-field>
@@ -34,7 +34,7 @@
                 item-value="key"
                 :items="accountList"
                 label="Chọn tài khoản*"
-                v-model="selectAccount"
+                v-model="selectedAccountKey"
                 required
               ></v-select>
             </v-flex>
@@ -121,7 +121,8 @@
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="blue darken-1" flat>Thêm</v-btn>
+        <v-btn color="blue darken-1" flat @click="$emit('close-dialog')">Đóng</v-btn>
+        <v-btn color="blue darken-1" flat @click="onPressAddBudget">Thêm</v-btn>
       </v-card-actions>
     </v-card>
     <v-dialog v-model="categoriesDialog" width="400px">
@@ -177,6 +178,8 @@
 <script>
 import categories from '@/common/categories.js'
 import firebase from '@/services/fireinit.js'
+import { mapMutations } from 'vuex'
+import moment from 'moment'
 
 export default {
   data: function() {
@@ -193,9 +196,10 @@ export default {
       active: null,
       listCategoriesType: ['Tiền vào', 'Tiền ra', 'Ghi nợ'],
       categories: categories,
-      name: '',
+      nameBudget: '',
       categoriesType: '',
-      selectAccount: null,
+      selectedAccountKey: null,
+      selectedCategories: null,
       accountList: [],
       categoriesDialog: false
     }
@@ -207,7 +211,18 @@ export default {
     }
   },
   methods: {
+    compare(dateTimeA, dateTimeB) {
+      var momentA = moment(dateTimeA).format('D/M/YYYY')
+      var momentB = moment(dateTimeB).format('D/M/YYYY')
+      if (momentA > momentB || momentA == momentB) return 1
+      else if (momentA < momentB) return -1
+    },
+    ...mapMutations({
+      setSnack: 'snackbar/setSnack'
+    }),
     onClickCategoryType(item) {
+      console.log('Category ', item)
+      this.selectedCategories = item
       this.categoriesType = item.name
       this.selectCategory = item
       this.categoriesDialog = false
@@ -221,7 +236,10 @@ export default {
         this.accountLoading = true
         const allAccount = {
           key: '',
-          name: 'Tất cả tài khoản'
+          name: 'Tất cả tài khoản',
+          accountKey:'',
+          accountType:'',
+          
         }
         array.push(allAccount)
         let keys = (snapshot.val() && Object.keys(snapshot.val())) || []
@@ -232,15 +250,124 @@ export default {
         this.accountList = array
         array = []
       })
+    },
+    onPressAddBudget() {
+      const { amount, nameBudget, selectedAccount } = this
+
+      const startDate = this.date1
+      const endDate = this.date2
+      if (amount == 0) {
+        this.setSnack({
+          msg: 'Số tiền giao dịch phải lớn hơn 0',
+          color: 'error'
+        })
+      } else if (nameBudget == '') {
+        this.setSnack({
+          msg: 'Vui lòng điền tên hạn mức',
+          color: 'error'
+        })
+      } else if (this.selectedCategories == null) {
+        this.setSnack({
+          msg: 'Vui lòng chọn hạng mục',
+          color: 'error'
+        })
+      } else if (this.selectedAccountKey == null) {
+        this.setSnack({
+          msg: 'Vui lòng chọn ví',
+          color: 'error'
+        })
+      } else if (this.compare(endDate, startDate) != 1) {
+        this.setSnack({
+          msg: 'Ngày kết thúc trước ngày bắt đầu. Vui lòng chọn lại',
+          color: 'error'
+        })
+      } else {
+        const accountItem = this.accountList.filter(
+          item => item.key === this.selectedAccountKey
+        )[0]
+        
+        const selectedAccount = accountItem.name
+        console.log([
+          accountItem,
+          selectedAccount,
+          accountItem,
+          this.selectedCategories
+        ])
+
+        const accountKey = accountItem.key
+        const accountType = accountItem.accountType
+        const categories = this.selectedCategories.name
+        const type = this.selectedCategories.type
+
+        this.writeBudgetData(
+          amount,
+          nameBudget,
+          categories,
+          selectedAccount,
+          startDate,
+          endDate,
+          accountKey,
+          accountType,
+          type
+        )
+        this.setSnack({
+          msg: 'Đã thêm hạn mức thành công',
+          color: 'success'
+        })
+        this.$emit('close-dialog')
+      }
+    },
+    async writeBudgetData(
+      amount,
+      nameBudget,
+      categories,
+      selectedAccount,
+      startDate,
+      endDate,
+      accountKey,
+      accountType,
+      type
+    ) {
+      const uid = await firebase.auth().currentUser.uid
+      var newBudgetKey = firebase
+        .database()
+        .ref()
+        .child(`${uid}/Budget`)
+        .push().key
+
+      await firebase
+        .database()
+        .ref(`${uid}/Budget/${newBudgetKey}`)
+        .set({
+          amount: parseInt(amount),
+          nameBudget: nameBudget,
+          categories: categories,
+          account: selectedAccount,
+          startDate: startDate,
+          endDate: endDate,
+          key: newBudgetKey,
+          accountKey: accountKey,
+          accountType: accountType,
+          type: type
+        })
+      this.amount = 0
+      this.date1 = new Date().toISOString().substr(0, 10)
+      this.time1 = '00:00'
+      this.date2 = new Date().toISOString().substr(0, 10)
+      this.time2 = '00:00'
+      this.nameBudget = ''
+      this.categoriesType = ''
+      this.selectedAccountKey = null
+      this.selectedCategories = null
     }
   },
   mounted() {
     this.readAccountData()
   },
   watch: {
-    selectAccount() {
-      console.log(this.selectAccount)
-    },
+    // selectedAccount(){
+    //   console.log(this.selectedAccount)
+    // },
     date1() {
       this.modaldate1 = false
     },

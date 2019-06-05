@@ -19,7 +19,7 @@
       <v-progress-linear :value="process" :color="process>100 ? 'red' : 'blue'"></v-progress-linear>
       <v-layout justify-space-between mb-2>
         <div>
-          <v-list-tile-title>Còn {{countdownDay(budgetItem.endDate)}}</v-list-tile-title>
+          <v-list-tile-title :style="countdownDay(budgetItem.endDate) === 'Hạn mức này đã quá hạn' ? 'color:red' :null">{{countdownDay(budgetItem.endDate)}}</v-list-tile-title>
         </div>
         <div>
           <v-list-tile-title>
@@ -188,7 +188,7 @@ export default {
                 }
               }
             })
-            let processRate = totalSpent*100 / this.budgetItem.amount
+            let processRate = (totalSpent * 100) / this.budgetItem.amount
             let remain = this.budgetItem.amount - totalSpent
             this.process = processRate
             this.dealDataByBudget = array
@@ -208,8 +208,9 @@ export default {
                 moment(snapshot.val()[item].date).diff(
                   moment(this.budgetItem.startDate)
                 ) >= 0 &&
-                moment(snapshot.val()[item].date).diff(moment(this.budgetItem.endDate)) <=
-                  0 &&
+                moment(snapshot.val()[item].date).diff(
+                  moment(this.budgetItem.endDate)
+                ) <= 0 &&
                 snapshot.val()[item].categories === this.budgetItem.categories
               ) {
                 totalSpent = totalSpent + parseInt(snapshot.val()[item].amount)
@@ -217,7 +218,7 @@ export default {
               }
             })
 
-            let processRate = totalSpent*100 / this.budgetItem.amount
+            let processRate = (totalSpent * 100) / this.budgetItem.amount
             let remain = this.budgetItem.amount - totalSpent
             this.process = processRate
             this.dealDataByBudget = array
@@ -236,8 +237,8 @@ export default {
             Math.floor(milisecondTime / 1000 / 60 / 60 / 24)) *
             24
         )
-
-      return `${day} ngày ${hour} giờ`
+      if (day < 0) return 'Hạn mức này đã quá hạn'
+      else return `Còn ${day} ngày ${hour} giờ`
 
       // return (`Còn ${Number(milisecondTime/1000/60/60/24)} ngày ${Number((milisecondTime/1000/60/60/24-Number(milisecondTime/1000/60/60/24))*24)} giờ`)
     },

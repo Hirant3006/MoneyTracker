@@ -371,13 +371,7 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <v-footer
-      app
-      :fixed="fixed"
-      class="justify-center px-4"
-    >
-      <!-- <span>&copy; 2017</span> -->
-    </v-footer>
+
     <snackbar />
     <!-- Add categories -->
     <v-dialog
