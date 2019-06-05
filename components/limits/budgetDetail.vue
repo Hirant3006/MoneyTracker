@@ -24,13 +24,21 @@
         </v-menu>
       </v-card-title>
       <v-card-text style="padding-top:0px">
-        <span class="subheading font-weight-medium mb-3">
-          <v-avatar size="40px" color="grey lighten-4">
-            <img :src="getIconCategories(budgetItem.categories) ">
-          </v-avatar>
-          &nbsp;
-          {{budgetItem.nameBudget}}
-        </span>
+        <v-layout justify-space-between>
+          <div>
+            <span class="subheading font-weight-medium mb-3">
+              <v-avatar size="40px" color="grey lighten-4">
+                <img :src="getIconCategories(budgetItem.categories) ">
+              </v-avatar>
+              &nbsp;
+              {{budgetItem.nameBudget}}
+            </span>
+          </div>
+          <div class="font-weight-medium" style="display:flex;flex-direction:column">
+            <span style="text-align:right">{{budgetItem.categories}}</span>
+            <span>{{budgetItem.accountType}}</span>
+          </div>
+        </v-layout>
         <v-layout
           mt-1
           justify-space-between
@@ -135,6 +143,7 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <edit-budget-dialog @close-dialog='editBudgetDialog=false' :editBudgetDialog="editBudgetDialog" :budgetItem="budgetItem"/>
   </v-dialog>
 </template>
 
@@ -143,15 +152,20 @@ import moment from 'moment'
 import { extendMoment } from 'moment-range'
 import { mapMutations } from 'vuex'
 import firebase from '@/services/fireinit.js'
+import editBudgetDialog from './editBudgetDialog'
 
 const Moment = extendMoment(moment)
 
 export default {
+  components: {
+    'edit-budget-dialog':editBudgetDialog,
+  },
   data: function() {
     return {
       Moment: Moment,
       moment: moment,
       confirmDialog: false,
+      editBudgetDialog: false,
       items: [
         {
           title: 'Sửa',
@@ -205,7 +219,7 @@ export default {
         .database()
         .ref(`${uid}/Budget/${this.budgetItem.key}`)
         .remove()
-      this.$emit('close-dialog');
+      this.$emit('close-dialog')
       this.setSnack({ msg: 'Xóa hạn mức thành công', color: 'success' })
     },
     onToggleMore(info, item) {
@@ -214,7 +228,7 @@ export default {
         this.deleteItem = item
       }
       if (info.title === 'Sửa') {
-        this.editDialog = true
+        this.editBudgetDialog = true
         this.editAccountItem = item
       }
     },
@@ -406,7 +420,7 @@ export default {
   mounted() {
     // console.log(this.listDealData)
     // console.log(this.budgetItem)
-
+    console.log(this)
     this.time = this.convertMiliseconds(
       Moment()
         .range(moment(this.budgetItem.startDate).format(), moment().format())

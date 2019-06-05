@@ -1,8 +1,8 @@
 <template>
-  <v-dialog v-model="addBudgetDialog" persistent max-width="600px">
+  <v-dialog v-model="editBudgetDialog" persistent max-width="600px">
     <v-card>
       <v-card-title>
-        <span class="headline pb-1">Thêm hạn mức</span>
+        <span class="headline pb-1">Sửa hạn mức</span>
       </v-card-title>
       <v-card-text style="padding-top:0">
         <v-form ref="forgetAccountForm">
@@ -51,31 +51,6 @@
                 </template>
                 <v-date-picker v-model="date1" scrollable></v-date-picker>
               </v-dialog>
-              <v-flex xs3 sm3 md3>
-                <v-dialog
-                  ref="dialog"
-                  v-model="modaltime1"
-                  persistent
-                  lazy
-                  full-width
-                  width="290px"
-                >
-                  <template v-slot:activator="{ on }">
-                    <v-text-field
-                      v-model="time1"
-                      label="Giờ"
-                      prepend-icon="access_time"
-                      readonly
-                      v-on="on"
-                    ></v-text-field>
-                  </template>
-                  <v-time-picker v-if="modaltime1" v-model="time1" full-width>
-                    <v-spacer></v-spacer>
-                    <v-btn flat color="primary" @click="modaltime1 = false">OK</v-btn>
-                    <!-- <v-btn flat color="primary" @click="$refs.dialog.save(time1)">OK</v-btn> -->
-                  </v-time-picker>
-                </v-dialog>
-              </v-flex>
             </v-layout>
             <v-layout justify-space-between>
               <v-dialog ref="dialog" v-model="modaldate2" persistent lazy full-width width="290px">
@@ -90,31 +65,6 @@
                 </template>
                 <v-date-picker v-model="date2" scrollable></v-date-picker>
               </v-dialog>
-              <v-flex xs3 sm3 md3>
-                <v-dialog
-                  ref="dialog"
-                  v-model="modaltime2"
-                  persistent
-                  lazy
-                  full-width
-                  width="290px"
-                >
-                  <template v-slot:activator="{ on }">
-                    <v-text-field
-                      v-model="time2"
-                      label="Giờ"
-                      prepend-icon="access_time"
-                      readonly
-                      v-on="on"
-                    ></v-text-field>
-                  </template>
-                  <v-time-picker v-if="modaltime2" v-model="time2" full-width>
-                    <v-spacer></v-spacer>
-                    <v-btn flat color="primary" @click="modaltime2 = false">OK</v-btn>
-                    <!-- <v-btn flat color="primary" @click="$refs.dialog.save(time2)">OK</v-btn> -->
-                  </v-time-picker>
-                </v-dialog>
-              </v-flex>
             </v-layout>
           </v-layout>
         </v-form>
@@ -122,7 +72,7 @@
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn color="blue darken-1" flat @click="$emit('close-dialog')">Đóng</v-btn>
-        <v-btn color="blue darken-1" flat @click="onPressAddBudget">Thêm</v-btn>
+        <v-btn color="blue darken-1" flat @click="onPressEditBudget">Sửa</v-btn>
       </v-card-actions>
     </v-card>
     <v-dialog v-model="categoriesDialog" width="400px">
@@ -184,7 +134,8 @@ import moment from 'moment'
 export default {
   data: function() {
     return {
-      amount: "",
+      uid: '',
+      amount: '',
       date1: new Date().toISOString().substr(0, 10),
       modaltime1: false,
       modaldate1: false,
@@ -205,18 +156,16 @@ export default {
     }
   },
   props: {
-    addBudgetDialog: {
+    budgetItem: {
+      type: Object,
+      required: true
+    },
+    editBudgetDialog: {
       type: Boolean,
       required: true
     }
   },
   methods: {
-    compare(dateTimeA, dateTimeB) {
-      var momentA = moment(dateTimeA).format('D/M/YYYY')
-      var momentB = moment(dateTimeB).format('D/M/YYYY')
-      if (momentA > momentB || momentA == momentB) return 1
-      else if (momentA < momentB) return -1
-    },
     ...mapMutations({
       setSnack: 'snackbar/setSnack'
     }),
@@ -236,9 +185,8 @@ export default {
         const allAccount = {
           key: '',
           name: 'Tất cả tài khoản',
-          accountKey:'',
-          accountType:'',
-          
+          accountKey: '',
+          accountType: ''
         }
         array.push(allAccount)
         let keys = (snapshot.val() && Object.keys(snapshot.val())) || []
@@ -249,113 +197,93 @@ export default {
         array = []
       })
     },
-    onPressAddBudget() {
-      const { amount, nameBudget, selectedAccount } = this
-
-      const startDate = this.date1
-      const endDate = this.date2
-      if (amount == 0) {
+    onPressEditBudget() {
+      let account = this.accountList.filter(
+        item => item.key === this.selectedAccountKey
+      )[0]
+      if (account === undefined) {
+        account.name = 'Tất cả tài khoản'
+        account.key = ''
+        account.accountType = ''
+      }
+      if (this.amount === '')
         this.setSnack({
-          msg: 'Số tiền giao dịch phải lớn hơn 0',
+          msg: 'Vui lòng nhập khoảng tiền',
           color: 'error'
         })
-      } else if (nameBudget == '') {
-        this.setSnack({
-          msg: 'Vui lòng điền tên hạn mức',
-          color: 'error'
-        })
-      } else if (this.selectedCategories == null) {
-        this.setSnack({
-          msg: 'Vui lòng chọn hạng mục',
-          color: 'error'
-        })
-      } else if (this.selectedAccountKey == null) {
-        this.setSnack({
-          msg: 'Vui lòng chọn ví',
-          color: 'error'
-        })
-      } else if (moment(endDate).diff(moment(startDate)) <0) {
+      else if (moment(this.date2).diff(moment(this.date1)) < 0) {
         this.setSnack({
           msg: 'Ngày kết thúc trước ngày bắt đầu. Vui lòng chọn lại',
           color: 'error'
         })
+      } else if (this.nameBudget === '') {
+        this.setSnack({
+          msg: 'Vui lòng tên hạn mức',
+          color: 'error'
+        })
+      } else
+        this.updateBudget(
+          this.amount,
+          this.nameBudget,
+          this.date1,
+          this.date2,
+          account
+        )
+    },
+    async updateBudget(amount, nameBudget, startDate, endDate, account) {
+      if (this.selectedCategories === null) {
+        await firebase
+          .database()
+          .ref(`${this.uid}/Budget/${this.budgetItem.key}`)
+          .update({
+            amount,
+            nameBudget,
+            account: account.name,
+            accountKey: account.key,
+            accountType: account.accountType,
+            startDate,
+            endDate
+          })
+        this.setSnack({
+          msg: 'Đã sửa hạn mức thành công',
+          color: 'success'
+        })
+        this.$emit('close-dialog')
       } else {
-        const accountItem = this.accountList.filter(
-          item => item.key === this.selectedAccountKey
-        )[0]
-        
-        const selectedAccount = accountItem.name
-      
-
-        const accountKey = accountItem.key
-        const accountType = accountItem.accountType
         const categories = this.selectedCategories.name
         const type = this.selectedCategories.type
-
-        this.writeBudgetData(
-          amount,
-          nameBudget,
-          categories,
-          selectedAccount,
-          startDate,
-          endDate,
-          accountKey,
-          accountType,
-          type
-        )
+        await firebase
+          .database()
+          .ref(`${this.uid}/Budget/${this.budgetItem.key}`)
+          .update({
+            amount,
+            nameBudget,
+            account: account.name,
+            accountKey: account.key,
+            accountType: account.accountType,
+            startDate,
+            endDate,
+            categories,
+            type
+          })
         this.setSnack({
-          msg: 'Đã thêm hạn mức thành công',
+          msg: 'Đã sửa hạn mức thành công',
           color: 'success'
         })
         this.$emit('close-dialog')
       }
-    },
-    async writeBudgetData(
-      amount,
-      nameBudget,
-      categories,
-      selectedAccount,
-      startDate,
-      endDate,
-      accountKey,
-      accountType,
-      type
-    ) {
-      const uid = await firebase.auth().currentUser.uid
-      var newBudgetKey = firebase
-        .database()
-        .ref()
-        .child(`${uid}/Budget`)
-        .push().key
-
-      await firebase
-        .database()
-        .ref(`${uid}/Budget/${newBudgetKey}`)
-        .set({
-          amount: parseInt(amount),
-          nameBudget: nameBudget,
-          categories: categories,
-          account: selectedAccount,
-          startDate: startDate,
-          endDate: endDate,
-          key: newBudgetKey,
-          accountKey: accountKey,
-          accountType: accountType,
-          type: type
-        })
-      this.amount = 0
-      this.date1 = new Date().toISOString().substr(0, 10)
-      this.time1 = '00:00'
-      this.date2 = new Date().toISOString().substr(0, 10)
-      this.time2 = '00:00'
-      this.nameBudget = ''
-      this.categoriesType = ''
-      this.selectedAccountKey = null
-      this.selectedCategories = null
     }
   },
-  mounted() {
+  async mounted() {
+    this.uid = await firebase.auth().currentUser.uid
     this.readAccountData()
+    const b = this.budgetItem
+    this.amount = b.amount
+    this.nameBudget = b.nameBudget
+    this.categoriesType = b.categories
+    this.selectedAccountKey = b.accountKey
+    this.date1 = b.startDate
+    this.date2 = b.endDate
   },
   watch: {
     date1() {
@@ -364,11 +292,6 @@ export default {
     date2() {
       this.modaldate2 = false
     },
-    time1() {
-    },
-    time2() {
-    }
-  }
 }
 </script>
 

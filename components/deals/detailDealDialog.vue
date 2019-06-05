@@ -218,7 +218,6 @@ export default {
       const accountItem = this.accountList.filter(
         item => item.key == this.dealItem.accountKey
       )[0]
-      console.log(accountItem)
       const { amount, note, date, time, event, people } = this
 
       if (amount == '') {
@@ -348,19 +347,7 @@ export default {
       accountBalance,
       accountKey
     ) {
-      console.log([
-        amount,
-        categories,
-        note,
-        date,
-        time,
-        event,
-        people,
-        selectedAccount,
-        type,
-        accountBalance,
-        accountKey
-      ])
+     
       const uid = await firebase.auth().currentUser.uid
       var newDealKey = firebase
         .database()
@@ -442,7 +429,6 @@ export default {
         })
         .catch(error => {
           //error callback
-          console.log('error ', error)
         })
       await firebase
         .database()
@@ -469,7 +455,6 @@ export default {
   },
   watch: {
     dealItem() {
-      console.log('Deal item ', this.dealItem)
     }
   },
   mounted() {},
