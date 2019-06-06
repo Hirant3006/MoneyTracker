@@ -1,7 +1,6 @@
 <template>
   <div>
     <div>
-      <v-divider class="mb-3"/>
       <v-layout justify-space-between @click="budgetDetailDialog=true" style="cursor:pointer">
         <div style="display:flex">
           <v-avatar size="40px" color="grey lighten-4">

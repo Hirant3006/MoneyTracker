@@ -3,7 +3,6 @@
     <v-flex xs12 sm8>
       <v-container grid-list-lg>
         <v-flex xs12>
-          <h2 class="mb-4">Tài khoản</h2>
           <v-card color class="dark--text">
             <v-card-title primary-title>
               <div style="width:100%">

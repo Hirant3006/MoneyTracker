@@ -21,7 +21,7 @@
                         ml-2
                         align-center
                       >
-                        <v-avatar tile="true" :size="70" color=" lighten-4">
+                        <v-avatar  :size="70" color=" lighten-4">
                           <img :src="accountIcon(account[selectedAccountIndex])" alt="avatar">
                         </v-avatar>
                         <div

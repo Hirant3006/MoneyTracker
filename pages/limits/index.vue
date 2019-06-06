@@ -3,7 +3,6 @@
     <v-flex xs12 sm8>
       <v-container grid-list-lg>
         <v-layout justify-space-between row wrap>
-          <h2 class="mb-4">Hạn mức chi</h2>
           <v-flex xs12 sm12 md12 lg12 xl12>
             <v-card>
               <v-card-title primary-title>
@@ -29,6 +28,7 @@
                       :key="index"
                       v-else
                     >
+                      <v-divider class="mb-4"/>  
                       <budget-item :budgetItem="item"/>
                     </v-container>
                   </v-list>
@@ -52,11 +52,11 @@ import addBudgetDialog from '@/components/limits/addBudgetDialog.vue'
 export default {
   components: {
     'budget-item': budgetItem,
-    'add-budget-dialog' : addBudgetDialog
+    'add-budget-dialog': addBudgetDialog
   },
   data: function() {
     return {
-      addBudgetDialog:false,
+      addBudgetDialog: false,
       budgets: [],
       listpercentbudgets: [],
       listDealDataByAccount: []
@@ -160,16 +160,13 @@ export default {
         )
 
       return `${day} ngày ${hour} giờ`
-    },
-   
+    }
   },
   mounted() {
     this.readBudgetData()
   },
   watch: {
-    budgets() {
-      console.log(this.budgets)
-    }
+    budgets() {}
   }
 }
 </script>
