@@ -2,7 +2,6 @@
   <div>
     <v-container grid-list-lg>
       <v-flex xs12>
-        <h2 class="mb-4">Tổng quan</h2>
         <v-card hover @click="$router.push('/wallet')" color class="dark--text">
           <v-card-title primary-title>
             <div style="width:100%">
@@ -162,7 +161,7 @@ export default {
       budgets: null,
       deals: null,
       total: null,
-      accountList: null
+      accountList: null,
     }
   },
   mounted() {

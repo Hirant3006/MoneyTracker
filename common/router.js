@@ -3,6 +3,5 @@ export default [
     { icon: "money", title: "Tài khoản", to: "/wallet" },
     { icon: "cached", title: "Giao dịch", to: "/deals" },    
     { icon: "person", title: "Hạn mức chi", to: "/limits" },
-    // { icon: "about", title: "About", to: "/about" },
-
+    { icon: "insert_chart_outlined", title: "Thống kê", to: "/statistics" },
 ]
