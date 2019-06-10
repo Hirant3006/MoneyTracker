@@ -17,7 +17,7 @@
       </v-flex>
 
       <v-layout justify-space-between row wrap>
-        <v-flex xs12 sm12 md7 lg7 xl7>
+        <v-flex xs12 sm12 md6 lg6 xl6>
           <v-card hover @click="$router.push('/limits')" color class="dark--text">
             <v-card-title primary-title>
               <div style="width:100%">
@@ -49,7 +49,7 @@
             </v-card-title>
           </v-card>
         </v-flex>
-        <v-flex xs12 sm12 md5 lg5 style="width:100%">
+        <v-flex xs12 sm12 md6 lg6 xl6 style="width:100%">
           <v-card hover @click="$router.push('/deals')" color style="width:100%">
             <v-card-title primary-title>
               <div style="width:100%">
@@ -59,7 +59,15 @@
                   <v-layout v-if="deals===null" mt-1 mb-1 justify-center>
                     <v-progress-circular indeterminate></v-progress-circular>
                   </v-layout>
+                  <v-layout
+                    mt-3
+                    mb-1
+                    style="color:red"
+                    justify-center
+                    v-else-if="deals.length===0"
+                  >Hiện chưa có ghi chép nào</v-layout>
                   <v-container
+                    v-else
                     class="font-weight-medium"
                     v-for="(item,index) in deals"
                     :key="index"
@@ -161,7 +169,7 @@ export default {
       budgets: null,
       deals: null,
       total: null,
-      accountList: null,
+      accountList: null
     }
   },
   mounted() {

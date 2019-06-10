@@ -1,8 +1,8 @@
 <template>
   <v-layout>
     <v-flex text-xs-center xs12 sm6 offset-sm3>
-      <img :src="require('@/assets/Image/cash.png')" alt="logo" width="50px" height="50px" >
-      <h3 class="mb-4"> I love money </h3>
+      <img :src="require('@/assets/Image/cash.png')" alt="logo" width="50px" height="50px">
+      <h3 class="mb-4">I love money</h3>
       <v-text-field
         prepend-icon="person"
         name="login"
@@ -18,7 +18,7 @@
         type="password"
         v-model="formPassword"
       ></v-text-field>
-      <v-btn class="signIn m-t-10 w-200" @click="emailLogin" primary>Đăng nhập</v-btn>
+      <v-btn class="signIn m-t-10 w-200" @click="emailLogin" :loading="loading" primary>Đăng nhập</v-btn>
       <v-layout class="m-tb-10" justify-space-between>
         <span
           class="red--text"
@@ -29,10 +29,22 @@
       </v-layout>
       <span>________OR________</span>
       <div class="m-t-20">
-        <v-btn class="m-5 w-200" primary @click.native="googleSignUp">
-          <v-icon>fas fa-google</v-icon>Đăng nhập với Google
+        <v-btn
+          style="color:white;width: 250px;"
+          color="#DB4437"
+          class="m-5 w-200"
+          primary
+          @click.native="googleSignUp"
+        >
+          <v-icon>fa-facebook-f</v-icon>Đăng nhập với Google
         </v-btn>
-        <v-btn class="m-5 w-200" primary @click.native="facebookSignUp">
+        <v-btn
+          style="color:white;width: 250px;"
+          color="#3C5A99"
+          class="m-5 w-200"
+          primary
+          @click.native="facebookSignUp"
+        >
           <v-icon>fas fa-facebook</v-icon>Đăng nhập với Facebook
         </v-btn>
       </div>
@@ -68,6 +80,7 @@ import { mapMutations } from 'vuex'
 export default {
   data() {
     return {
+      loading:false,
       formEmail: '',
       formPassword: '',
       dialog: false,
@@ -84,6 +97,7 @@ export default {
       setSnack: 'snackbar/setSnack'
     }),
     emailLogin() {
+      this.loading=true
       this.$store
         .dispatch('user/signInWithEmail', {
           email: this.formEmail,
@@ -93,11 +107,13 @@ export default {
           this.formEmail = ''
           this.formPassword = ''
           this.setSnack({ msg: 'Đăng nhập thành công', color: 'success' })
+          this.loading=false
         })
         .catch(data => {
           this.formEmail = ''
           this.formPassword = ''
           this.setSnack({ msg: data.message, color: 'error' })
+          this.loading=false
         })
     },
     googleSignUp() {
@@ -123,24 +139,22 @@ export default {
     resetPassword() {
       if (this.emailreset.length > 0) {
         const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-        return (
-          this.$store
-            .dispatch('user/resetPassword', {
-              email: this.emailreset
+        return this.$store
+          .dispatch('user/resetPassword', {
+            email: this.emailreset
+          })
+          .then(() => {
+            this.emailreset = ''
+            this.setSnack({
+              msg: 'Một email xác nhận đã được gửi đến mail của bạn',
+              color: 'success'
             })
-            .then(() => {
-              this.emailreset = ''
-              this.setSnack({
-                msg: 'Một email xác nhận đã được gửi đến mail của bạn',
-                color: 'success'
-              })
-              this.forgotPasswordDialog = false
-            })
-            .catch(data => {
-              this.emailreset = ''
-              this.setSnack({ msg: data.message, color: 'error' })
-            }) 
-        )
+            this.forgotPasswordDialog = false
+          })
+          .catch(data => {
+            this.emailreset = ''
+            this.setSnack({ msg: data.message, color: 'error' })
+          })
       } else
         this.setSnack({
           msg: 'Vui lòng không bỏ trống',

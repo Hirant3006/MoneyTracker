@@ -1,7 +1,7 @@
 <template>
   <v-layout>
     <v-flex text-xs-center xs12 sm6 offset-sm3>
-      Đăng ký
+      <span class="title">Đăng ký</span>
       <v-text-field
         prepend-icon="person"
         name="login"
@@ -24,10 +24,18 @@
       </v-layout>
       <span>________OR________</span>
       <div class="m-t-20">
-        <v-btn class="m-5 w-200" primary @click.native="googleSignUp">
+        <v-btn
+          style="color:white;width:250px;"
+          primary
+          @click.native="googleSignUp"
+        >
           <v-icon>fas fa-google</v-icon>Đăng nhập với Google
         </v-btn>
-        <v-btn class="m-5 w-200" primary @click.native="facebookSignUp">
+        <v-btn
+          style="color:white;width:250px;"
+          primary
+          @click.native="facebookSignUp"
+        >
           <v-icon>fas fa-facebook</v-icon>Đăng nhập với Facebook
         </v-btn>
       </div>

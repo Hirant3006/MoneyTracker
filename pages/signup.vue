@@ -1,7 +1,7 @@
 <template>
   <v-layout>
     <v-flex text-xs-center xs12 sm6 offset-sm3>
-      Đăng ký
+      <span class="title">Đăng ký</span>
       <v-text-field
         prepend-icon="person"
         name="login"
@@ -17,19 +17,33 @@
         type="password"
         v-model="formPassword"
       ></v-text-field>
-      <v-btn class="signIn m-t-10 w-200" @click="emailSignUp" primary>Đăng ký</v-btn>
+      <div style="text-align:end;cursor:pointer;color:#3C5A99" @click="$router.push('/')">Quay lại</div>
+      <v-btn class="signIn m-t-10 w-200" :loading="loading" @click="emailSignUp" primary>Đăng ký</v-btn>
       <br>
+
       <span>________OR________</span>
       <div class="m-t-20">
-        <v-btn class="m-5 w-200" primary @click.native="googleSignUp">
-          <v-icon>fas fa-google</v-icon>Sign in with Google
+        <v-btn
+          class="m-5 w-200"
+          color="#DB4437"
+          style="color:white;width: 250px;"
+          primary
+          @click.native="googleSignUp"
+        >
+          <v-icon>fas fa-google</v-icon>Đăng nhập với Google
         </v-btn>
-        <v-btn class="m-5 w-200" primary @click.native="facebookSignUp">
-          <v-icon>fas fa-facebook</v-icon>Sign In with Facebook
+        <v-btn
+          class="m-5 w-200"
+          color="#3C5A99"
+          style="color:white;width: 250px;"
+          primary
+          @click.native="facebookSignUp"
+        >
+          <v-icon>fas fa-facebook</v-icon>Đăng nhập với Facebook
         </v-btn>
       </div>
     </v-flex>
-    <v-snackbar v-model="snackbar" :color="color" :timeout="5000" :top='true'>
+    <v-snackbar v-model="snackbar" :color="color" :timeout="5000" :top="true">
       {{ text }}
       <v-btn dark flat @click="snackbar = false">Close</v-btn>
     </v-snackbar>
@@ -40,6 +54,7 @@
 export default {
   data() {
     return {
+      loading: false,
       formEmail: '',
       formPassword: '',
       snackbar: false,
@@ -49,6 +64,7 @@ export default {
   },
   methods: {
     emailLogin() {
+      this.loading = true
       this.$store
         .dispatch('signInWithEmail', {
           email: this.formEmail,
@@ -57,8 +73,10 @@ export default {
         .then(() => {
           this.formEmail = ''
           this.formPassword = ''
+          this.loading = false
         })
         .catch(e => {
+          this.loading = false
           console.log(e.message)
         })
     },

@@ -1,5 +1,6 @@
 <template>
   <div>
+   
     <v-layout v-if="account.length!==0" justify-center align-center column>
       <v-flex xs12 sm8>
         <v-container grid-list-lg>
@@ -21,7 +22,7 @@
                         ml-2
                         align-center
                       >
-                        <v-avatar  :size="70" color=" lighten-4">
+                        <v-avatar :size="70" color=" lighten-4">
                           <img :src="accountIcon(account[selectedAccountIndex])" alt="avatar">
                         </v-avatar>
                         <div
@@ -42,7 +43,7 @@
                 <!-- <v-tabs show-arrows fixed-tabs v-model="activeSelectmonthTab">
                   <v-tab v-for="n in listMonth" :key="n">{{ n }}</v-tab>
                 </v-tabs>-->
-                <v-layout justify-space-around mt-1>
+                <v-layout v-if="account.length!==0" justify-space-around mt-1>
                   <v-btn @click="onClickPrevMonth" small depressed>
                     <v-icon dark>arrow_back</v-icon>
                     &nbsp;
@@ -57,7 +58,7 @@
               </v-card>
             </v-flex>
           </v-layout>
-          <v-layout mb-1 justify-space-between row wrap>
+          <v-layout v-if="account.length!==0" mb-1 justify-space-between row wrap>
             <v-flex style="padding-top:0px" xs12 sm12 md12 lg12 xl12>
               <v-card style="width:400px">
                 <v-card-text primary-title>
@@ -225,7 +226,7 @@
       <!-- Deal Detail -->
       <detailDealDialog
         :detailDealDialog="detailDealDialog"
-         @close-dialog="detailDealDialog=false"
+        @close-dialog="detailDealDialog=false"
         :dealItem="selecetedDealItem"
         :accountList="account"
       />
@@ -324,7 +325,7 @@ export default {
     'add-account-dialog': addAccountDialog,
     'transfer-account-dialog': transferAccountDialog,
     'edit-account-dialog': editAccountDialog,
-    'detailDealDialog': detailDealDialog
+    detailDealDialog: detailDealDialog
   },
   data: function() {
     return {
@@ -696,10 +697,10 @@ export default {
         .add(1, 'months')
         .format('YYYY-MM')
     },
-    onClickDetailDialog(item){
-      console.log(item);
-      this.selecetedDealItem=item;
-      this.detailDealDialog=true;
+    onClickDetailDialog(item) {
+      console.log(item)
+      this.selecetedDealItem = item
+      this.detailDealDialog = true
     }
   },
   computed: {

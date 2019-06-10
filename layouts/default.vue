@@ -501,16 +501,12 @@ export default {
       accountList: [],
       selectCategory: null,
       utilItems: [
-        {
-          title: 'Lịch sử ghi chép',
-          icon: 'note'
-        },
-        {
-          title: 'Ghi chép mẫu',
-          icon: 'note'
-        },
-        { title: 'Chuyển tiền', icon: 'swap_horiz' },
-        { title: 'Điều chỉnh số dư', icon: 'settings' },
+        // {
+        //   title: 'Lịch sử ghi chép',
+        //   icon: 'note'
+        // },
+        // { title: 'Chuyển tiền', icon: 'swap_horiz' },
+        // { title: 'Điều chỉnh số dư', icon: 'settings' },
         { title: 'Thống kê theo tháng', icon: 'equalizer' },
         { title: 'Đăng xuất', icon: 'logout' }
       ],
@@ -559,6 +555,7 @@ export default {
     onToggleMore(info, item) {
       console.log({ info }, { item })
       if (info.title === 'Đăng xuất') this.logout()
+      // if (info.title === 'Thống kê theo tháng') this.$router.push('/statistics')
     },
     onToggleAddDealDialog() {
       this.addDealDialog = true
