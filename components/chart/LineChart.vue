@@ -1,4 +1,5 @@
 <script>
+import moment from 'moment'
 import { Line, mixins } from 'vue-chartjs'
 const { reactiveProp } = mixins
 
@@ -7,9 +8,14 @@ export default {
   mixins: [reactiveProp],
   data() {
     return {
+      currentYear: moment().format('YYYY'),
       options: {
         legend: {
-          display: false
+          display: true
+        },
+        title: {
+          display: true,
+          text: 'Biểu đồ thu chi ' + moment().format('YYYY'),
         },
         scales: {
           yAxes: [
@@ -18,7 +24,9 @@ export default {
                 beginAtZero: true,
                 callback: function(value, index, values) {
                   let val = (value / 1).toFixed(0).replace('.', ',')
-                  return ` ${val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}đ`
+                  return ` ${val
+                    .toString()
+                    .replace(/\B(?=(\d{3})+(?!\d))/g, ',')}đ`
                 }
               }
             }

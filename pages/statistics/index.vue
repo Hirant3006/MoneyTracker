@@ -95,7 +95,7 @@
               <v-layout justify-center>
                 <v-card-title
                   class="subheading"
-                >Chọn thời gian đi, cho tao xem mày chi tiền ngáo thế nào nào :) ??</v-card-title>
+                >Chọn thời gian đi, để tao xem mày chi tiền ngáo thế nào :) ??</v-card-title>
               </v-layout>
             </v-card>
           </v-flex>
@@ -105,11 +105,7 @@
             <v-card>
               <v-card-title>
                 <v-layout v-if="linedata!==null" justify-center column>
-                  <line-chart class="mt-2" style="height:600px" :chart-data="linedata"/>
-                  <span
-                    style="align-self:center"
-                    class="mt-5 title"
-                  >Biểu đồ thu chi năm {{currentYear}}</span>
+                  <line-chart class="mt-2"  :chart-data="linedata"/>
                 </v-layout>
                 <v-layout v-else mt-1 mb-1 justify-center>
                   <v-progress-circular indeterminate></v-progress-circular>
