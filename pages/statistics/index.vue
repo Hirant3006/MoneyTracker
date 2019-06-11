@@ -53,20 +53,25 @@
           </v-card>
         </v-flex>
 
-        <v-layout v-if="filterdealbydate!==null" justify-space-between row wrap>
-          <v-flex xs12 sm12 md12 lg12 xl12>
+        <v-layout justify-space-between row wrap>
+          <v-flex v-if="piedata!==null" xs12 sm12 md12 lg12 xl12>
             <v-alert
               v-if="!comparedate(date1,date2)"
               v-model="alert"
               type="error"
-            >Ngày sau phải lớn hơn ngày trước.</v-alert>
+            >Ngày sau phải lớn hơn ngày trước idiot ( ͠° ͟ʖ ͡°)</v-alert>
+            <v-card v-else-if="piedata.total===0">
+              <v-layout justify-center>
+                <v-card-title class="subheading">Mày đâu có móc tiền trong lúc này đâu ??</v-card-title>
+              </v-layout>
+            </v-card>
             <v-card v-else>
               <v-card-title>
                 <v-layout justify-center column>
-                  <pie-chart style="height:250px" :chart-data="filterdealbydate"></pie-chart>
+                  <pie-chart style="height:250px" :chart-data="piedata"></pie-chart>
                   <v-list>
                     <v-list-tile
-                      v-for="(item,index) in filterdealbydate.labels"
+                      v-for="(item,index) in piedata.labels"
                       :key="index"
                       avatar
                       class="pr-2 pl-2"
@@ -77,10 +82,37 @@
                       <v-list-tile-title v-html="item"></v-list-tile-title>
                       <v-list-tile-title
                         style="text-align:right;color:red"
-                        v-html="`${formatPrice(filterdealbydate.datasets[0].data[index])} đ`"
+                        v-html="`${formatPrice(piedata.datasets[0].data[index])} đ`"
                       ></v-list-tile-title>
                     </v-list-tile>
                   </v-list>
+                </v-layout>
+              </v-card-title>
+            </v-card>
+          </v-flex>
+          <v-flex v-else xs12 sm12 md12 lg12 xl12>
+            <v-card>
+              <v-layout justify-center>
+                <v-card-title
+                  class="subheading"
+                >Chọn thời gian đi, cho tao xem mày chi tiền ngáo thế nào nào :) ??</v-card-title>
+              </v-layout>
+            </v-card>
+          </v-flex>
+        </v-layout>
+        <v-layout justify-space-between row wrap>
+          <v-flex xs12 sm12 md12 lg12 xl12>
+            <v-card>
+              <v-card-title>
+                <v-layout v-if="linedata!==null" justify-center column>
+                  <line-chart class="mt-2" style="height:600px" :chart-data="linedata"/>
+                  <span
+                    style="align-self:center"
+                    class="mt-5 title"
+                  >Biểu đồ thu chi năm {{currentYear}}</span>
+                </v-layout>
+                <v-layout v-else mt-1 mb-1 justify-center>
+                  <v-progress-circular indeterminate></v-progress-circular>
                 </v-layout>
               </v-card-title>
             </v-card>
@@ -103,28 +135,28 @@ const colorset = [
   '#8b76a5',
   '#bfcfff'
 ]
-const Label = {
-  expense: [
-    'Ăn uống',
-    'Con cái',
-    'Dịch vụ',
-    'Đi lại',
-    'Hiếu hỉ',
-    'Hưởng thụ',
-    'Sức khỏe',
-    'Trang phục',
-    'Khác'
-  ],
-  income: ['Tiền thưởng', 'Lương', 'Được tặng', 'Khoảng khác']
-}
+
 const dummydata = {
-  //Data to be represented on x-axis
-  labels: ['Red', 'Yellow', 'Blue'],
+  labels: [
+    'Tháng 1',
+    'Tháng 2',
+    'Tháng 3',
+    'Tháng 4',
+    'Tháng 5',
+    'Tháng 6',
+    'Tháng 7',
+    'Tháng 8',
+    'Tháng 9',
+    'Tháng 10',
+    'Tháng 11',
+    'Tháng 12'
+  ],
   datasets: [
     {
-      borderAlign: 'center',
-      backgroundColor: colorset,
-      data: [10, 20]
+      label: 'Data One',
+      borderColor: 'rgba(75, 192, 192, 1)',
+      backgroundColor: 'rgba(75, 192, 192, 0.1)',
+      data: [40, 39, 10, 40, 39, 80, 40, 90, 120, 12, 123, 41]
     }
   ]
 }
@@ -145,14 +177,14 @@ export default {
       alert: true,
       colorset,
       categoriesData,
-      labelList: Label,
       date1: null,
       modaldate1: false,
       date2: null,
       modaldate2: false,
       deals: null,
       dealType: 'expense',
-      loadingchart: false
+      loadingchart: false,
+      currentYear: moment().format('YYYY')
     }
   },
   mounted() {
@@ -200,7 +232,7 @@ export default {
     // }
   },
   computed: {
-    filterdealbydate() {
+    piedata() {
       let array = []
       let labels = []
       let data = []
@@ -210,8 +242,9 @@ export default {
           element =>
             moment(element.date).diff(moment(this.date1)) > 0 &&
             moment(element.date).diff(moment(this.date2)) < 0 &&
-            element.type === this.dealType
+            element.type.localeCompare(this.dealType) === 0
         )
+        console.log('array ', array)
         if ((this.dealType = 'expense')) {
           this.categoriesData.expense.forEach(element => {
             let total = 0
@@ -241,6 +274,60 @@ export default {
           total: datatotal
         }
       } else return null
+    },
+    linedata() {
+      let expense = []
+      let income = []
+      const currentMonthYear = moment().format('YYYY')
+      if (this.deals !== null) {
+        for (let i = 0; i < 12; i++) {
+          expense[i] = 0
+          income[i] = 0
+          this.deals.forEach(item => {
+            if (
+              moment(item.date)
+                .format('M-YYYY')
+                .localeCompare(i + 1 + '-' + currentMonthYear) === 0
+            ) {
+              if (item.type.localeCompare('expense') === 0)
+                expense[i] += item.amount
+              else income[i] += item.amount
+            }
+          })
+        }
+        return {
+          labels: [
+            'Tháng 1',
+            'Tháng 2',
+            'Tháng 3',
+            'Tháng 4',
+            'Tháng 5',
+            'Tháng 6',
+            'Tháng 7',
+            'Tháng 8',
+            'Tháng 9',
+            'Tháng 10',
+            'Tháng 11',
+            'Tháng 12'
+          ],
+          datasets: [
+            {
+              label: 'Tiền chi',
+              borderColor: '#f6a7ba',
+              backgroundColor: 'rgba(75, 192, 192, 0.1)',
+              data: expense
+            },
+            {
+              label: 'Tiền thu',
+              borderColor: '#72d6c9',
+              backgroundColor: 'rgba(75, 192, 192, 0.1)',
+              data: income
+            }
+          ]
+        }
+      }
+      return null
+      // console.log(expense, income)
     }
   },
   watch: {

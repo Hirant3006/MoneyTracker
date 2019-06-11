@@ -5,8 +5,36 @@ const { reactiveProp } = mixins
 export default {
   extends: Line,
   mixins: [reactiveProp],
-  props: ['options'],
-  mounted () {
+  data() {
+    return {
+      options: {
+        legend: {
+          display: false
+        },
+        scales: {
+          yAxes: [
+            {
+              ticks: {
+                beginAtZero: true,
+                callback: function(value, index, values) {
+                  let val = (value / 1).toFixed(0).replace('.', ',')
+                  return ` ${val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}đ`
+                }
+              }
+            }
+          ]
+        },
+        responsive: true
+      }
+    }
+  },
+  methods: {
+    formatPrice(value) {
+      let val = (value / 1).toFixed(0).replace('.', ',')
+      return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+    }
+  },
+  mounted() {
     // this.chartData is created in the mixin.
     // If you want to pass options please create a local options object
     this.renderChart(this.chartData, this.options)
