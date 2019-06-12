@@ -1,7 +1,17 @@
 <template>
   <v-layout>
-    <v-flex text-xs-center xs12 sm6 offset-sm3>
-      <img :src="require('@/assets/Image/cash.png')" alt="logo" width="50px" height="50px">
+    <v-flex
+      text-xs-center
+      xs12
+      sm6
+      offset-sm3
+    >
+      <img
+        :src="require('@/assets/Image/cash.png')"
+        alt="logo"
+        width="50px"
+        height="50px"
+      >
       <h3 class="mb-4">I love money</h3>
       <v-text-field
         prepend-icon="person"
@@ -18,8 +28,16 @@
         type="password"
         v-model="formPassword"
       ></v-text-field>
-      <v-btn class="signIn m-t-10 w-200" @click="emailLogin" :loading="loading" primary>Đăng nhập</v-btn>
-      <v-layout class="m-tb-10" justify-space-between>
+      <v-btn
+        class="signIn m-t-10 w-200"
+        @click="emailLogin"
+        :loading="loading"
+        primary
+      >Đăng nhập</v-btn>
+      <v-layout
+        class="m-tb-10"
+        justify-space-between
+      >
         <span
           class="red--text"
           @click="forgotPasswordDialog = true"
@@ -28,11 +46,15 @@
         <router-link to="/signup">Đăng ký</router-link>
       </v-layout>
       <span>________OR________</span>
-      <div class="m-t-20">
+      <v-layout
+        justify-center
+        column
+        align-center
+      >
         <v-btn
           style="color:white;width: 250px;"
           color="#DB4437"
-          class="m-5 w-200"
+          class=""
           primary
           @click.native="googleSignUp"
         >
@@ -41,15 +63,18 @@
         <v-btn
           style="color:white;width: 250px;"
           color="#3C5A99"
-          class="m-5 w-200"
+          class=""
           primary
           @click.native="facebookSignUp"
         >
           <v-icon>fas fa-facebook</v-icon>Đăng nhập với Facebook
         </v-btn>
-      </div>
+      </v-layout>
     </v-flex>
-    <v-dialog v-model="forgotPasswordDialog" max-width="600px">
+    <v-dialog
+      v-model="forgotPasswordDialog"
+      max-width="600px"
+    >
       <v-card>
         <v-card-title>
           <span class="headline pb-1">Quên mật khẩu</span>
@@ -58,8 +83,17 @@
         <v-card-text style="padding-top:0">
           <v-form ref="forgetAccountForm">
             <v-layout wrap>
-              <v-flex xs12 sm12 md12>
-                <v-text-field style="padding-top:0" label="Email" type="email" v-model="emailreset"></v-text-field>
+              <v-flex
+                xs12
+                sm12
+                md12
+              >
+                <v-text-field
+                  style="padding-top:0"
+                  label="Email"
+                  type="email"
+                  v-model="emailreset"
+                ></v-text-field>
               </v-flex>
             </v-layout>
           </v-form>
@@ -67,7 +101,11 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <!-- <v-btn color="blue darken-1" flat @click="forgotPasswordDialog = false">Đóng</v-btn> -->
-          <v-btn color="blue darken-1" flat @click="resetPassword">Gửi email đặt lại mật khẩu</v-btn>
+          <v-btn
+            color="blue darken-1"
+            flat
+            @click="resetPassword"
+          >Gửi email đặt lại mật khẩu</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -80,7 +118,7 @@ import { mapMutations } from 'vuex'
 export default {
   data() {
     return {
-      loading:false,
+      loading: false,
       formEmail: '',
       formPassword: '',
       dialog: false,
@@ -97,7 +135,7 @@ export default {
       setSnack: 'snackbar/setSnack'
     }),
     emailLogin() {
-      this.loading=true
+      this.loading = true
       this.$store
         .dispatch('user/signInWithEmail', {
           email: this.formEmail,
@@ -107,13 +145,13 @@ export default {
           this.formEmail = ''
           this.formPassword = ''
           this.setSnack({ msg: 'Đăng nhập thành công', color: 'success' })
-          this.loading=false
+          this.loading = false
         })
         .catch(data => {
           this.formEmail = ''
           this.formPassword = ''
           this.setSnack({ msg: data.message, color: 'error' })
-          this.loading=false
+          this.loading = false
         })
     },
     googleSignUp() {

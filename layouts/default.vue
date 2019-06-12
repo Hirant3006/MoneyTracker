@@ -62,12 +62,19 @@
               <v-list-tile avatar>
                 <v-list-tile-avatar>
                   <img
+                    v-if="$store.state.user.photoURL!==null"
                     :src="$store.state.user.photoURL"
+                    alt="user"
+                  >
+                  <img
+                    v-else
+                    src="https://www.ironpaper.com/webintel/wp-content/uploads/2016/07/b2b-buyer-persona-icon.gif"
                     alt="user"
                   >
                 </v-list-tile-avatar>
                 <v-list-tile-content>
                   <v-list-tile-title v-if="user.displayName">{{user.displayName}}</v-list-tile-title>
+                  <v-list-tile-title v-else>Người dùng</v-list-tile-title>
                 </v-list-tile-content>
               </v-list-tile>
               <v-divider></v-divider>
@@ -507,7 +514,7 @@ export default {
         // },
         // { title: 'Chuyển tiền', icon: 'swap_horiz' },
         // { title: 'Điều chỉnh số dư', icon: 'settings' },
-        { title: 'Thống kê theo tháng', icon: 'equalizer' },
+        { title: 'Thống kê', icon: 'equalizer' },
         { title: 'Đăng xuất', icon: 'logout' }
       ],
       title: 'I love money',
@@ -555,7 +562,7 @@ export default {
     onToggleMore(info, item) {
       console.log({ info }, { item })
       if (info.title === 'Đăng xuất') this.logout()
-      // if (info.title === 'Thống kê theo tháng') this.$router.push('/statistics')
+      if (info.title === 'Thống kê') this.$router.push('/statistics')
     },
     onToggleAddDealDialog() {
       this.addDealDialog = true
@@ -757,6 +764,9 @@ export default {
     date() {
       this.modaldate = false
     }
+  },
+  mounted() {
+    console.log('User ', this.$store.state.user)
   }
 }
 </script>
