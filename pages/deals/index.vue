@@ -3,7 +3,6 @@
     <v-layout v-if="account.length!==0" justify-center align-center>
       <v-flex xs12 sm7 md5 lg5 xl5>
         <v-container grid-list-lg style="padding-bottom:0px">
-          <v-flex xs12>
             <v-card color class="dark--text">
               <v-card-title primary-title>
                 <v-layout pl-1 pr-1 justify-center>
@@ -48,7 +47,6 @@
                 </v-btn>
               </v-layout>
             </v-card>
-          </v-flex>
         </v-container>
       </v-flex>
     </v-layout>
