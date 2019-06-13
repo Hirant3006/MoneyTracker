@@ -532,10 +532,11 @@ export default {
     }
   },
   async mounted() {
-    if (this.$store.state.user) await this.readAccountData()
+     await this.readAccountData()
   },
   methods: {
     async readAccountData() {
+      console.log('heelo')
       let array = []
       const uid = await firebase.auth().currentUser.uid
       var ref = await firebase.database().ref(`${uid}/Account`)
@@ -547,6 +548,7 @@ export default {
           array.push(snapshot.val()[item])
         })
         this.accountList = array
+        console.log('account list ',this.accountList)
         array = []
       })
     },
@@ -747,6 +749,13 @@ export default {
   watch: {
     date() {
       this.modaldate = false
+    },
+    accountList() {
+      console.log('ACCOUNT LIST ',this.accountList)
+    },
+    addDealDialog() {
+      console.log('Adddeal dialog ',this.addDealDialog)
+      if (this.addDealDialog == true ) this.readAccountData()
     }
   },
   mounted() {
