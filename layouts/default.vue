@@ -477,7 +477,7 @@ import snackbar from '../components/common/Snackbar'
 import { mapMutations } from 'vuex'
 import categories from '@/common/categories.js'
 import firebase from '@/services/fireinit.js'
-
+import moment from 'moment'
 export default {
   data() {
     return {
@@ -525,7 +525,6 @@ export default {
     }
   },
   async mounted() {
-    console.log('mounted layout')
     if (this.$store.state.user) await this.readAccountData()
   },
   methods: {
@@ -553,7 +552,6 @@ export default {
       setSnack: 'snackbar/setSnack'
     }),
     onToggleMore(info, item) {
-      console.log({ info }, { item })
       if (info.title === 'Đăng xuất') this.logout()
       // if (info.title === 'Thống kê theo tháng') this.$router.push('/statistics')
     },
@@ -570,12 +568,12 @@ export default {
       this.$router.push('/')
     },
     onPressAddDeals() {
-      console.log(this)
       const accountItem = this.accountList.filter(
         item => item.key == this.selectAccount
       )[0]
       const { amount, note, date, time, event, people } = this
-
+      const convertime = moment(time).toISOString();
+      const convertday = moment(date).toISOString()
       if (amount == '') {
         alert('Số tiền giao dịch phải lớn hơn 0')
         this.setSnack({
@@ -604,8 +602,8 @@ export default {
           amount,
           categories,
           note,
-          date,
-          time,
+          convertday,
+          convertime,
           event,
           people,
           selectedAccount,
@@ -639,19 +637,6 @@ export default {
       accountBalance,
       accountKey
     ) {
-      console.log([
-        amount,
-        categories,
-        note,
-        date,
-        time,
-        event,
-        people,
-        selectedAccount,
-        type,
-        accountBalance,
-        accountKey
-      ])
       const uid = await firebase.auth().currentUser.uid
       var newDealKey = firebase
         .database()
@@ -733,7 +718,6 @@ export default {
         })
         .catch(error => {
           //error callback
-          console.log('error ', error)
         })
       await firebase
         .database()
