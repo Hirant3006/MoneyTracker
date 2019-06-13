@@ -158,7 +158,6 @@ export default {
       this.$store
         .dispatch('user/signInWithGoogle')
         .then(() => {
-          console.log('inside then statement on login')
         })
         .catch(e => {
           this.setSnack({ msg: e.message, color: 'error' })
@@ -168,7 +167,6 @@ export default {
       this.$store
         .dispatch('user/signInWithFacebook')
         .then(() => {
-          console.log('inside then statement on login')
         })
         .catch(e => {
           this.setSnack({ msg: e.message, color: 'error' })

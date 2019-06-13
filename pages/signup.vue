@@ -77,27 +77,22 @@ export default {
         })
         .catch(e => {
           this.loading = false
-          console.log(e.message)
         })
     },
     googleSignUp() {
       this.$store
         .dispatch('signInWithGoogle')
         .then(() => {
-          console.log('inside then statement on login')
         })
         .catch(e => {
-          console.log(e.message)
         })
     },
     facebookSignUp() {
       this.$store
         .dispatch('signInWithFacebook')
         .then(() => {
-          console.log('inside then statement on login')
         })
         .catch(e => {
-          console.log(e.message)
         })
     },
     emailSignUp() {
@@ -116,7 +111,6 @@ export default {
           // this.$router.push('/login')
         )
         .catch(data => {
-          console.log('catch')
           this.text = data.message
           this.color = 'error'
           this.snackbar = true

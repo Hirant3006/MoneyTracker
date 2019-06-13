@@ -677,7 +677,6 @@ export default {
         .format('YYYY-MM')
     },
     onClickDetailDialog(item) {
-      console.log(item)
       this.selecetedDealItem = item
       this.detailDealDialog = true
     }
@@ -743,10 +742,7 @@ export default {
       // }
     },
     monthFilter() {
-      console.log(
-        'Filter deal ',
-        this.filterDealbyDate(this.monthFilter, this.dealList)
-      )
+     
     },
     selectedAccountIndex() {
       this.readDealData()

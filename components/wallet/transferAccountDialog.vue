@@ -249,7 +249,6 @@ export default {
         })
         .catch(error => {
           //error callback
-          console.log('error ', error)
         })
       await firebase
         .database()
@@ -284,7 +283,6 @@ export default {
         })
         .catch(error => {
           //error callback
-          console.log('error ', error)
         })
       this.setSnack({
         msg: 'Đã chuyển khoản thành công',
@@ -300,7 +298,6 @@ export default {
   },
   watch: {
     date() {
-      console.log(this.date)
       this.modaldate=false;
     }
   }

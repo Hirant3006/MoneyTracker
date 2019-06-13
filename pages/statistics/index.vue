@@ -240,7 +240,6 @@ export default {
             moment(element.date).diff(moment(this.date2)) < 0 &&
             element.type.localeCompare(this.dealType) === 0
         )
-        console.log('array ', array)
         if ((this.dealType = 'expense')) {
           this.categoriesData.expense.forEach(element => {
             let total = 0
@@ -334,7 +333,6 @@ export default {
       this.modaldate2 = false
     },
     deals() {
-      console.log('Deals ', this.deals)
     }
   }
 }

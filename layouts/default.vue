@@ -750,7 +750,6 @@ export default {
     }
   },
   mounted() {
-    console.log('User ', this.$store.state.user)
   }
 }
 </script>

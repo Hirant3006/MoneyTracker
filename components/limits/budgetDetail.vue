@@ -420,7 +420,6 @@ export default {
   mounted() {
     // console.log(this.listDealData)
     // console.log(this.budgetItem)
-    console.log(this)
     this.time = this.convertMiliseconds(
       Moment()
         .range(moment(this.budgetItem.startDate).format(), moment().format())
@@ -430,7 +429,6 @@ export default {
   },
   watch: {
     listDealData() {
-      console.log('List deal ', this.listDealData)
     }
   }
 }

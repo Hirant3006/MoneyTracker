@@ -231,7 +231,6 @@ export default {
           keys.map((item, index) => {
             array.push(snapshot.val()[item])
           })
-          console.log('Deals ', array)
           this.deals = array
           array = []
         })
@@ -280,7 +279,6 @@ export default {
   },
   watch: {
     deals() {
-      console.log(this.deals)
     }
   }
 }

@@ -133,7 +133,6 @@ export default {
           note: note
         })
         .catch(error => {
-          console.log('error ', error)
         })
     }
   },
@@ -142,7 +141,6 @@ export default {
   },
   watch: {
     accountItem() {
-      console.log('Account item ', this.accountItem),
         (this.name = this.accountItem.name)
       this.balance = this.accountItem.balance
       this.accountType = this.accountItem.accountType
