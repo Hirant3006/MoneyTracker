@@ -62,7 +62,7 @@
             >Ngày sau phải lớn hơn ngày trước idiot ( ͠° ͟ʖ ͡°)</v-alert>
             <v-card v-else-if="piedata.total===0">
               <v-layout justify-center>
-                <v-card-title class="subheading">Mày đâu có móc tiền trong lúc này đâu ??</v-card-title>
+                <v-card-title class="subheading">Bạn không có hoạt động nào trong thời gian này</v-card-title>
               </v-layout>
             </v-card>
             <v-card v-else>
@@ -95,7 +95,7 @@
               <v-layout justify-center>
                 <v-card-title
                   class="subheading"
-                >Chọn thời gian đi, để tao xem mày chi tiền ngáo thế nào :) ??</v-card-title>
+                >Vui lòng chọn mốc thời gian để xem hoạt động thu chi</v-card-title>
               </v-layout>
             </v-card>
           </v-flex>

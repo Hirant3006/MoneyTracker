@@ -157,7 +157,6 @@ import categories from '@/common/categories.js'
 import firebase from '@/services/fireinit.js'
 import { mapMutations } from 'vuex'
 import moment from 'moment'
-
 export default {
   components: {
     'budget-item': budgetItem

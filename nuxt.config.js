@@ -23,6 +23,11 @@ module.exports = {
     ]
   },
 
+  manifest: {
+    name: 'I love money',
+    lang: 'fa',
+    "gcm_sender_id":"103953800507"
+  },
   router: {
     middleware: 'router-auth'
   },
