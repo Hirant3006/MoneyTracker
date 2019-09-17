@@ -1,6 +1,5 @@
 const pkg = require('./package')
 
-
 const VuetifyLoaderPlugin = require('vuetify-loader/lib/plugin')
 
 module.exports = {
@@ -26,7 +25,7 @@ module.exports = {
   manifest: {
     name: 'I love money',
     lang: 'fa',
-    "gcm_sender_id":"103953800507"
+    gcm_sender_id: '103953800507'
   },
   router: {
     middleware: 'router-auth'
@@ -34,39 +33,43 @@ module.exports = {
   loading: { color: '#fff' },
 
   css: [
-    '~/assets/style/app.styl',
+    '~/assets/style/app.styl'
     // { src: '~/assets/css/common.scss', lang: 'scss' },
-
-
   ],
   plugins: [
     { src: '@/plugins/vuetify' },
     '~/plugins/fireauth.js',
     '~/plugins/currency-filter.js',
     '~/plugins/reverse.js'
-
   ],
 
-  modules: [
-    '@nuxtjs/axios',
-  ],
-  axios: {
-  },
+  modules: ['@nuxtjs/axios'],
+  axios: {},
 
   build: {
     transpile: ['vuetify/lib'],
     plugins: [new VuetifyLoaderPlugin()],
     loaders: {
       stylus: {
-        import: ["~assets/style/variables.styl"]
+        import: ['~assets/style/variables.styl']
       }
     },
-    extend(config, ctx) {
-
-    }
+    extend(config, ctx) {}
   },
-  vendor: [
-    'firebase',
-    'vuetify'
-  ]
+  vendor: ['firebase', 'vuetify'],
+  workbox: {
+    runtimeCaching: [
+      {
+        urlPattern: 'https://my-cdn.com/posts/.*',
+        strategyOptions: {
+          cacheName: 'our-cache',
+          cacheExpiration: {
+            maxEntries: 10,
+            maxAgeSeconds: 300
+          }
+        }
+      }
+    ],
+    importScripts: ['custom-sw.js']
+  }
 }
