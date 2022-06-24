@@ -19,7 +19,7 @@
     "firebase": "^5.9.3",
     "moment": "^2.24.0",
     "moment-range": "^4.0.2",
-    "node-fetch": "^2.3.0",
+    "node-fetch": "^2.6.7",
     "nuxt": "^2.4.0",
     "vue-chartjs": "^3.4.2",
     "vuetify": "^1.5.12",
